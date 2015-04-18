@@ -64,7 +64,6 @@ class ThompsonContructionVisitor
     automaton
   end
 
-
   def visit_concat(concat)
     to_join = []
 
@@ -113,16 +112,6 @@ class ThompsonContructionVisitor
   def union(dst, src)
     (dst.alphabet += src.alphabet).uniq!
     (dst.states += src.states).uniq!
-    require 'pry'; binding.pry
     dst.graph.merge! src.graph
   end
-
 end
-
-##
-# automaton.states = f.readline.tr("\n","").split(/\t/)
-# automaton.alphabet = f.readline.tr("\n","").split(/\t/)
-# automaton.initial_state = f.readline.strip
-# automaton.final_states = f.readline.strip.split(/\t/)
-# automaton.add_transition *line.strip.split(/\t/)
-##
