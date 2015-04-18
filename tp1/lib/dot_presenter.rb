@@ -3,17 +3,17 @@ class DotPresenter
 
   def initialize(automaton)
     @automaton = automaton
-    @output = 'digraph {'
-    @output << 'rankdir=LR;'
-    @output << "node [shape = none, label = ""]; qd;"
-    @output << 'node [label = "\N", width= 0.5, height = 0.5];'
+    @output = "strict digraph {\n"
+    @output << "\trankdir=LR;\n"
+    @output << "\tnode [shape = none, label = \"\"]; qd;\n"
+    @output << "\tnode [label = \"\\N\", width= 0.5, height = 0.5];\n"
 
     @automaton.final_states.each do |state|
-      @output << "node [shape = doublecircle]; #{state};"
+      @output << "\tnode [shape = doublecircle]; #{state};\n"
     end
 
-    @output << 'node [shape = circle];'
-    @output << "qd -> #{@automaton.initial_state}"
+    @output << "\tnode [shape = circle];\n"
+    @output << "\tqd -> #{@automaton.initial_state}\n"
 
     graph = Hash.new { |hash, key| hash[key] = {} }
     @automaton.states.each do |state|
@@ -26,7 +26,7 @@ class DotPresenter
 
     graph.each do |state, transitions|
       transitions.each do |dest, label|
-        @output << "#{state} -> #{dest} [label=\"#{label.join(', ')}\"]"
+        @output << "\t#{state} -> #{dest} [label=\"#{label.join(', ')}\"]\n"
       end
     end
 
