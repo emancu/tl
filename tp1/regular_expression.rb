@@ -50,19 +50,31 @@ class ConcatRegularExpression < RegularExpression
   def to_s
     @values.map(&:to_s).join
   end
+
+  def accept_visitor(visitor)
+    visitor.visit_concat self
+  end
 end
 
 class StarRegularExpression < RegularExpression
   def to_s
     str = @values.first.to_s
-    str = "(#{str})" unless a.match /^\(.*\)$/
+    str = "(#{str})" unless str.match /^\(.*\)$/
     str + '*'
+  end
+
+  def accept_visitor(visitor)
+    visitor.visit_star self
   end
 end
 
 class OrRegularExpression < RegularExpression
   def to_s
     "(#{@values.map(&:to_s).join('|')})"
+  end
+
+  def accept_visitor(visitor)
+    visitor.visit_or self
   end
 end
 
@@ -75,6 +87,10 @@ class SimpleRegularExpression < RegularExpression
 
   def to_s
     @char
+  end
+
+  def accept_visitor(visitor)
+    visitor.visit_simple self
   end
 end
 
@@ -100,5 +116,9 @@ end
 class LambdaRegularExpression < SimpleRegularExpression
   def initialize
     super('')
+  end
+
+  def accept_visitor(visitor)
+    visitor.visit_lambda self
   end
 end

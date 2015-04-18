@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 #
 require_relative "lib/automaton"
+require_relative "regular_expression"
+require_relative "thompson_contruction_visitor"
 
 def match_params?(params, expected_params, expected_size = nil)
   size_ok = params.size == (expected_size || expected_params.keys.size * 2)
@@ -13,11 +15,15 @@ params = ARGV[0..-1]
 if match_params?(params, {0 => "-leng", 2 => "-aut"})
   puts "afd minimo"
 
+  regexp = RegularExpression.from_file params[1]
+  automaton = Automaton.from_regular_expression regexp, ThompsonContructionVisitor
+  automaton.to_dot
 elsif match_params?(params, {0 => "-aut"}, 3)
   puts "pertenece cadena"
 elsif match_params?(params, {0 => "-aut", 2 => "-dot"})
   puts "grafo: "
-  Automaton.from_file params[1]
+  automaton = Automaton.from_file params[1]
+  automaton.to_dot
 elsif match_params?(params, {0 => "-intersec", 1 => "-aut", 3 => "-aut2", 5 => "-aut"}, 7)
   puts "interseccion"
 elsif match_params?(params, {0 => "-complemento", 1 => "-aut1", 3 => "-aut"}, 5)

@@ -9,6 +9,9 @@ class Automaton
   end
 
   def initialize
+    @states = []
+    @alphabet = []
+    @final_states = []
     @graph = Hash.new { |hash, key| hash[key] = {} }
   end
 
@@ -19,5 +22,9 @@ class Automaton
 
   def to_dot
     DotPresenter.new(self).output
+  end
+
+  def self.from_regular_expression(regexp, visitor)
+    visitor.visit regexp
   end
 end
