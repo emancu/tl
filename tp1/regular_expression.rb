@@ -13,7 +13,6 @@ class RegularExpression
     current_re
   end
 
-
   def self.read_file(file, amount)
     amount ||= '1'
     amount = amount.to_i
@@ -25,9 +24,9 @@ class RegularExpression
       matches = line.match SPECIAL
 
       if matches
-        values << factory(matches[1]).new_from_file file, matches[-1]
+        values << factory(matches[1]).new_from_file(file, matches[-1])
       else
-        values << SimpleRegularExpression.new line
+        values << SimpleRegularExpression.new(line)
       end
     end
 
@@ -48,15 +47,43 @@ class RegularExpression
 end
 
 class ConcatRegularExpression < RegularExpression
+  def to_s
+    @values.map(&:to_s).join
+  end
 end
 
 class StarRegularExpression < RegularExpression
+  def to_s
+    str = @values.first.to_s
+    str = "(#{str})" unless a.match /^\(.*\)$/
+    str + '*'
+  end
 end
 
 class OrRegularExpression < RegularExpression
+  def to_s
+    "(#{@values.map(&:to_s).join('|')})"
+  end
+end
+
+class SimpleRegularExpression < RegularExpression
+  attr_accessor :char
+
+  def initialize(line)
+    @char = line.strip
+  end
+
+  def to_s
+    @char
+  end
 end
 
 class PlusRegularExpression < RegularExpression
+  def self.new_from_file(file, amount)
+    star = StarRegularExpression.new_from_file file, amount
+
+    ConcatRegularExpression.new [star.values.first, star]
+  end
 end
 
 class OptRegularExpression < RegularExpression
@@ -67,14 +94,6 @@ class OptRegularExpression < RegularExpression
     or_expression.values << lambda_expression
 
     or_expression
-  end
-end
-
-class SimpleRegularExpression < RegularExpression
-  attr_accessor :char
-
-  def initialize(line)
-    @char = line.strip
   end
 end
 
