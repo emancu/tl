@@ -41,6 +41,37 @@ class Automaton
     final_states.include? current_node
   end
 
+  def get_complement
+    make_complete!
+
+    complement = Automaton.new
+    complement.alphabet = alphabet
+    complement.states = states
+    complement.graph = graph
+    complement.initial_state = initial_state
+    complement.final_states = states - final_states
+
+    complement
+  end
+
+  def make_complete!
+    return if complete?
+
+    terminal = "qt"
+    states << terminal
+    states.each do |state|
+      (alphabet - graph[state].keys).each do |label|
+        add_transition(state, label, terminal)
+      end
+    end
+  end
+
+  def complete?
+    states.all? do |state|
+      graph[state].keys.length == alphabet.length
+    end
+  end
+
   def deterministic?
     labels = graph.values.collect {|node_transitions| node_transitions.keys}
     has_lambda = labels.flatten.include? ""
