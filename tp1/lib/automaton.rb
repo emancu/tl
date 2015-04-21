@@ -82,4 +82,94 @@ class Automaton
 
     !has_lambda && only_one_to_node
   end
+
+  def get_deterministic
+    initial = self.closure_lambda([self.initial_state])
+    is = initial.sort.join('-')
+
+    automaton = Automaton.new
+    automaton.alphabet = alphabet
+    automaton.states << is
+    automaton.initial_state = is
+    automaton.final_states << is if (is.split("-") & final_states).any?
+
+    current_state = is
+    to_review = [is]
+    until to_review.empty?
+      current_state = to_review.shift
+      current_nodes = current_state.split("-")
+      alphabet.each do |char|
+        new_nodes = closure(current_nodes, char)
+        new_state = new_nodes.sort.join('-')
+        unless automaton.states.include? new_state
+          automaton.states << new_state
+          automaton.final_states << new_state if (new_state.split("-") & final_states).any?
+          to_review << new_state
+        end
+        automaton.add_transition(current_state, char, new_state)
+      end
+    end
+
+    automaton
+  end
+
+  def closure(nodes, char)
+    result = []
+    to_review = nodes.dup
+    visited = []
+
+    until to_review.empty?
+      current_node = to_review.shift
+      visited << current_node
+
+      to_review = to_review.uniq - visited
+      aux = Array(graph[current_node][char])
+
+      result += aux
+    end
+
+    result.uniq!
+
+    result = closure_lambda result
+
+    result
+  end
+
+  def closure_lambda(nodes)
+    result = nodes
+    to_review = nodes.dup
+    visited = []
+
+    until to_review.empty?
+      current_node = to_review.shift
+      visited << current_node
+
+      to_review = to_review.uniq - visited
+      aux = Array(graph[current_node][''])
+
+      to_review += aux
+      result += aux
+    end
+
+    result.uniq
+  end
+
+  def self.afnd
+    automaton = Automaton.new
+    automaton.initial_state = "q0"
+    automaton.final_states = ["q3"]
+    automaton.alphabet = ["0", "1"]
+    automaton.add_transition("q0", '', "q1")
+    automaton.add_transition("q0", '', "q2")
+    automaton.add_transition("q1", '0', "q1")
+    automaton.add_transition("q1", '1', "q1")
+    automaton.add_transition("q1", '1', "q3")
+    automaton.add_transition("q2", '0', "q2")
+    automaton.add_transition("q2", '1', "q4")
+    automaton.add_transition("q2", '', "q3")
+    automaton.add_transition("q4", '0', "q4")
+    automaton.add_transition("q4", '1', "q2")
+
+    automaton
+  end
 end
