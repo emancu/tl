@@ -15,7 +15,6 @@ class AutomatonHelper
 
     f.close
 
-    require 'pry'; binding.pry
     automaton
   end
 end

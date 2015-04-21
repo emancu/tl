@@ -19,7 +19,8 @@ if match_params?(params, {0 => "-leng", 2 => "-aut"})
   automaton = Automaton.from_regular_expression regexp, ThompsonContructionVisitor
   automaton.to_dot
 elsif match_params?(params, {0 => "-aut"}, 3)
-  puts "pertenece cadena"
+  automaton = Automaton.from_file params[1]
+  puts automaton.check_word(params[2]).to_s.upcase
 elsif match_params?(params, {0 => "-aut", 2 => "-dot"})
   puts "grafo: "
   automaton = Automaton.from_file params[1]
