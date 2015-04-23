@@ -22,15 +22,10 @@ elsif match_params?(params, {0 => "-aut"}, 3)
   automaton = Automaton.from_file params[1]
   puts automaton.check_word(params[2]).to_s.upcase
 elsif match_params?(params, {0 => "-aut", 2 => "-dot"})
-  puts "grafo: "
   automaton = Automaton.from_file params[1]
 
-  a = Automaton.afnd;
-  z = a.closure_lambda(['q0']);
-  u = a.closure(z, '0')
-
-  require 'pry'; binding.pry
-  automaton.to_dot
+  minimum = automaton.get_minimum
+  File.write(params[3], minimum.to_dot)
 elsif match_params?(params, {0 => "-intersec", 1 => "-aut", 3 => "-aut2", 5 => "-aut"}, 7)
   puts "interseccion"
 elsif match_params?(params, {0 => "-complemento", 1 => "-aut1", 3 => "-aut"}, 5)
