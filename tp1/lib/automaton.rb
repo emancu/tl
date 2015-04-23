@@ -51,6 +51,25 @@ class Automaton
     rev2 = det2.get_reverse
 
     minimum = rev2.get_deterministic
+    minimum.remove_terminal
+  end
+
+  # Ask if this is neccessary, improve code!
+  def remove_terminal
+    states.each do |state|
+      final = graph[state].all? {|key, values| values == [state]}
+      if final
+        self.states.reject! { |node| node == state }
+        self.graph.reject! { |node| node == state }
+        graph.each do |node, node_transitions|
+          node_transitions.each do |char, nodes|
+            nodes.reject! { |node| node == state }
+          end
+        end
+      end
+    end
+
+    self
   end
 
   def get_reverse
