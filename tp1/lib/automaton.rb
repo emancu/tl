@@ -16,6 +16,7 @@ class Automaton
   end
 
   def add_transition(from, with, to)
+    @graph[from] ||= {}
     @graph[from][with] ||= []
     @graph[from][with] << to
     @graph[from][with].uniq!
@@ -43,7 +44,7 @@ class Automaton
   end
 
 
-  def intersection_with(automaton)
+  def get_intersection_with(automaton)
     automaton.rename_nodes
     intersection = Automaton.new
     intersection.alphabet = self.alphabet & automaton.alphabet
@@ -138,6 +139,30 @@ class Automaton
     complement
   end
 
+  def get_union_with(automaton_2)
+    automaton_2.rename_nodes
+
+    union = Automaton.new
+    union.alphabet = (alphabet + automaton_2.alphabet).uniq
+    is, fs = "is", "fs"
+    union.states = ([is,fs] + (states) + automaton_2.states)
+    union.graph = graph.merge automaton_2.graph
+    union.initial_state = is
+    union.final_states = [fs]
+
+    final_states.each do |final|
+      union.add_transition(final, '', fs)
+    end
+    automaton_2.final_states.each do |final|
+      union.add_transition(final, '', fs)
+    end
+
+    union.add_transition(is, '', initial_state)
+    union.add_transition(is, '', automaton_2.initial_state)
+
+    union
+  end
+
   def make_complete!
     return if complete?
 
@@ -154,6 +179,30 @@ class Automaton
     states.all? do |state|
       graph[state].keys.length == alphabet.length
     end
+  end
+
+  def empty?
+    reachable = [initial_state]
+    to_review = [initial_state]
+    visited = []
+
+    until to_review.empty?
+      current_node = to_review.shift
+      visited << current_node
+
+      to_review = to_review.uniq - visited
+      aux = []
+      if !graph[current_node].nil?
+        alphabet.each do |char|
+          aux += Array(graph[current_node][char])
+        end
+      end
+
+      to_review += aux
+      reachable += aux
+    end
+
+    (reachable.uniq & final_states).empty?
   end
 
   def deterministic?
