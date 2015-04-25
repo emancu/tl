@@ -4,6 +4,8 @@ require_relative 'dot_presenter'
 class Automaton
   attr_accessor :graph, :states, :alphabet, :initial_state, :final_states
 
+  @@name = "a"
+
   def self.from_file(file)
     AutomatonHelper.read_from_file file, new
   end
@@ -29,7 +31,7 @@ class Automaton
     visitor.visit regexp
   end
 
-  def check_word word
+  def check_word(word)
     return false unless deterministic?
 
     current_node = initial_state
@@ -107,7 +109,8 @@ class Automaton
     reverse = Automaton.new
     reverse.alphabet = alphabet
     reverse.states = states
-    reverse.initial_state = "i1"
+    reverse.initial_state = "#{@@name}i"
+    @@name.next!
     reverse.final_states = [initial_state]
 
     graph.each do |node_from, node_transitions|
@@ -143,7 +146,8 @@ class Automaton
 
     union = Automaton.new
     union.alphabet = (alphabet + automaton_2.alphabet).uniq
-    is, fs = "is", "fs"
+    is, fs = "#{@@name}i", "#{@@name}f"
+    @@name.next!
     union.states = ([is,fs] + (states) + automaton_2.states)
     union.graph = graph.merge automaton_2.graph
     union.graph.default = {}
@@ -197,9 +201,10 @@ class Automaton
           aux += Array(graph[current_node][char])
         end
       end
+      aux -= visited
 
-      to_review += aux
-      reachable += aux
+      (to_review += aux).uniq!
+      (reachable += aux).uniq!
     end
 
     (reachable.uniq & final_states).empty?
@@ -249,7 +254,7 @@ class Automaton
   def rename_nodes
     new_names = {}
     states.map! do |s|
-      new_names[s] ||= "t#{new_names.keys.size}"
+      new_names[s] ||= "#{@@name}#{new_names.keys.size}"
     end
 
     self.initial_state = new_names[initial_state]
@@ -257,6 +262,7 @@ class Automaton
 
     self.graph = Hash[graph.map {|k, v| [new_names[k], Hash[v.map {|k2, v2| [k2, v2.map {|a| new_names[a]}] }]  ] }]
     self.graph.default = {}
+    @@name.next!
 
     self
   end
