@@ -211,11 +211,11 @@ class Automaton
   end
 
   def deterministic?
-    labels = graph.values.collect {|node_transitions| node_transitions.keys}
+    labels = graph.values.map(&:keys)
     has_lambda = labels.flatten.include? ""
 
     only_one_to_node = graph.values.all? do |node_transitions|
-      node_transitions.values.all? {|transitions| transitions.length <= 1}
+      node_transitions.values.all? { |transitions| transitions.length <= 1}
     end
 
     !has_lambda && only_one_to_node

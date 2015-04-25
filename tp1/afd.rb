@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 #
 require_relative "lib/automaton"
-require_relative "regular_expression"
-require_relative "thompson_contruction_visitor"
+require_relative "lib/regular_expression"
+require_relative "lib/thompson_construction_visitor"
 
 def match_params?(params, expected_params, expected_size = nil)
   size_ok = params.size == (expected_size || expected_params.keys.size * 2)
@@ -14,7 +14,7 @@ end
 params = ARGV[0..-1]
 if match_params?(params, {0 => "-leng", 2 => "-aut"})
   regexp = RegularExpression.from_file params[1]
-  automaton = Automaton.from_regular_expression regexp, ThompsonContructionVisitor
+  automaton = Automaton.from_regular_expression regexp, ThompsonConstructionVisitor
   minimum = automaton.get_minimum
   File.write(params[3], minimum.to_dot)
 elsif match_params?(params, {0 => "-aut"}, 3)

@@ -1,6 +1,6 @@
-require_relative './lib/automaton'
+require_relative 'automaton'
 
-class ThompsonContructionVisitor
+class ThompsonConstructionVisitor
   attr_accessor :order
 
   def self.visit(regexp)

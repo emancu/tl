@@ -19,7 +19,8 @@ class DotPresenter
     @automaton.states.each do |state|
       @automaton.graph[state].each do |k,v|
         v.each do |s|
-          graph[state][s] ||= []; graph[state][s] << k
+          graph[state][s] ||= []
+          graph[state][s] << k
         end
       end
     end
