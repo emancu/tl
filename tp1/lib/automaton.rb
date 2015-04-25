@@ -16,7 +16,6 @@ class Automaton
   end
 
   def add_transition(from, with, to)
-    @graph[from] ||= {}
     @graph[from][with] ||= []
     @graph[from][with] << to
     @graph[from][with].uniq!
@@ -147,6 +146,7 @@ class Automaton
     is, fs = "is", "fs"
     union.states = ([is,fs] + (states) + automaton_2.states)
     union.graph = graph.merge automaton_2.graph
+    union.graph.default = {}
     union.initial_state = is
     union.final_states = [fs]
 
@@ -256,6 +256,7 @@ class Automaton
     final_states.map! {|s| new_names[s]}
 
     self.graph = Hash[graph.map {|k, v| [new_names[k], Hash[v.map {|k2, v2| [k2, v2.map {|a| new_names[a]}] }]  ] }]
+    self.graph.default = {}
 
     self
   end
@@ -270,12 +271,7 @@ class Automaton
       visited << current_node
 
       to_review = to_review.uniq - visited
-
-      if graph[current_node].nil?
-        aux = []
-      else
-        aux = Array(graph[current_node][char])
-      end
+      aux = Array(graph[current_node][char])
 
       result += aux
     end
@@ -297,11 +293,7 @@ class Automaton
       visited << current_node
 
       to_review = to_review.uniq - visited
-      if graph[current_node].nil?
-        aux = []
-      else
-        aux = Array(graph[current_node][''])
-      end
+      aux = Array(graph[current_node][''])
 
       to_review += aux
       result += aux
