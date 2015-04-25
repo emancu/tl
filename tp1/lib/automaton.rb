@@ -42,6 +42,37 @@ class Automaton
     final_states.include? current_node
   end
 
+
+  def intersection_with(automaton)
+    automaton.rename_nodes
+    intersection = Automaton.new
+    intersection.alphabet = self.alphabet & automaton.alphabet
+    intersection.states = self.states.product automaton.states
+    intersection.states.map!{|states| states.join("-")}
+    intersection.initial_state = "#{initial_state}-#{automaton.initial_state}"
+
+    intersection.states.each do |from_state|
+      from_1, from_2 = from_state.split("-")
+      intersection.final_states << from_state if final_states.include?(from_1) && automaton.final_states.include?(from_2)
+      intersection.states.each do |to_state|
+        to_1, to_2 = to_state.split("-")
+        intersection.alphabet.each do |char|
+          if (transition_from_to_with?(from_1, to_1, char) && automaton.transition_from_to_with?(from_2, to_2, char))
+            intersection.add_transition(from_state, char, to_state)
+          end
+        end
+      end
+    end
+
+    intersection.rename_nodes
+    intersection.get_minimum
+  end
+
+  #private
+  def transition_from_to_with?(from, to, with)
+    graph[from] && !graph[from][with].nil? && graph[from][with].include?(to)
+  end
+
   # http://en.wikipedia.org/wiki/DFA_minimization#Brzozowski.27s_algorithm
   def get_minimum
     det = get_deterministic
@@ -57,7 +88,7 @@ class Automaton
   # Ask if this is neccessary, improve code!
   def remove_terminal
     states.each do |state|
-      final = graph[state].all? {|key, values| values == [state]}
+      final = !(final_states.include?(state)) && graph[state].all? {|key, values| values == [state]}
       if final
         self.states.reject! { |node| node == state }
         self.graph.reject! { |node| node == state }
@@ -190,7 +221,12 @@ class Automaton
       visited << current_node
 
       to_review = to_review.uniq - visited
-      aux = Array(graph[current_node][char])
+
+      if graph[current_node].nil?
+        aux = []
+      else
+        aux = Array(graph[current_node][char])
+      end
 
       result += aux
     end
@@ -212,7 +248,11 @@ class Automaton
       visited << current_node
 
       to_review = to_review.uniq - visited
-      aux = Array(graph[current_node][''])
+      if graph[current_node].nil?
+        aux = []
+      else
+        aux = Array(graph[current_node][''])
+      end
 
       to_review += aux
       result += aux

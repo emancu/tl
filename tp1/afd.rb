@@ -13,23 +13,25 @@ end
 
 params = ARGV[0..-1]
 if match_params?(params, {0 => "-leng", 2 => "-aut"})
-  puts "afd minimo"
-
   regexp = RegularExpression.from_file params[1]
   automaton = Automaton.from_regular_expression regexp, ThompsonContructionVisitor
-  automaton.to_dot
+  minimum = automaton.get_minimum
+  File.write(params[3], minimum.to_dot)
 elsif match_params?(params, {0 => "-aut"}, 3)
   automaton = Automaton.from_file params[1]
   puts automaton.check_word(params[2]).to_s.upcase
 elsif match_params?(params, {0 => "-aut", 2 => "-dot"})
   automaton = Automaton.from_file params[1]
-
-  minimum = automaton.get_minimum
-  File.write(params[3], minimum.to_dot)
-elsif match_params?(params, {0 => "-intersec", 1 => "-aut", 3 => "-aut2", 5 => "-aut"}, 7)
-  puts "interseccion"
+  File.write(params[3], automaton.to_dot)
+elsif match_params?(params, {0 => "-intersec", 1 => "-aut1", 3 => "-aut2", 5 => "-aut"}, 7)
+  automaton = Automaton.from_file params[2]
+  automaton2 = Automaton.from_file params[4]
+  intersection = automaton.intersection_with(automaton2)
+  File.write(params[6], intersection.to_dot)
 elsif match_params?(params, {0 => "-complemento", 1 => "-aut1", 3 => "-aut"}, 5)
-  puts "complemento"
+  automaton = Automaton.from_file params[2]
+  complement = automaton.get_complement
+  File.write(params[4], complement.to_dot)
 elsif match_params?(params, {0 => "-equival", 1 => "-aut1", 3 => "-aut2"}, 5)
   puts "son equivalentes"
 else
