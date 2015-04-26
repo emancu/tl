@@ -1,4 +1,3 @@
-require_relative 'automaton_helper'
 require_relative 'dot_presenter'
 
 class Automaton
@@ -7,7 +6,21 @@ class Automaton
   @@name = "a"
 
   def self.from_file(file)
-    AutomatonHelper.read_from_file file, new
+    automaton = new
+    f = File.open(file)
+
+    automaton.states = f.readline.strip.split(/\t/)
+    automaton.alphabet = f.readline.strip.split(/\t/)
+    automaton.initial_state = f.readline.strip
+    automaton.final_states = f.readline.strip.split(/\t/)
+
+    f.each do |line|
+      automaton.add_transition *line.strip.split(/\t/)
+    end
+
+    f.close
+
+    automaton
   end
 
   def initialize
@@ -25,10 +38,6 @@ class Automaton
 
   def to_dot
     DotPresenter.new(self).output
-  end
-
-  def self.from_regular_expression(regexp, visitor)
-    visitor.visit regexp
   end
 
   def check_word(word)
@@ -308,23 +317,4 @@ class Automaton
     result.uniq
   end
 
-  def self.afnd
-    automaton = Automaton.new
-    automaton.initial_state = "q0"
-    automaton.final_states = ["q3"]
-    automaton.alphabet = ["0", "1"]
-    automaton.states = ["q0", "q1", "q2", "q3", "q4"]
-    automaton.add_transition("q0", '', "q1")
-    automaton.add_transition("q0", '', "q2")
-    automaton.add_transition("q1", '0', "q1")
-    automaton.add_transition("q1", '1', "q1")
-    automaton.add_transition("q1", '1', "q3")
-    automaton.add_transition("q2", '0', "q2")
-    automaton.add_transition("q2", '1', "q4")
-    automaton.add_transition("q2", '', "q3")
-    automaton.add_transition("q4", '0', "q4")
-    automaton.add_transition("q4", '1', "q2")
-
-    automaton
-  end
 end

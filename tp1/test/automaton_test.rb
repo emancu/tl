@@ -1,34 +1,40 @@
 require_relative 'helper'
 
 describe Automaton do
-  before do
-    file = File.expand_path(File.dirname(__FILE__) + '/fixtures/automaton/ab.txt')
-    @afd = Automaton.from_file file
-    file = File.expand_path(File.dirname(__FILE__) + '/fixtures/automaton/ab-nd')
-    @afnd = Automaton.from_file file
+  describe 'from_file' do
+    it 'reads a file and returns the automaton' do
+      file = File.expand_path(File.dirname(__FILE__) + '/fixtures/automaton/ab.txt')
+      from_file = Automaton.from_file file
+
+      assert_equal load_afd.states, from_file.states
+      assert_equal load_afd.alphabet, from_file.alphabet
+      assert_equal load_afd.initial_state, from_file.initial_state
+      assert_equal load_afd.final_states, from_file.final_states
+      assert_equal load_afd.graph, from_file.graph
+    end
   end
 
   describe 'check word' do
     it 'returns true of the word is accepted' do
-      deny   @afd.check_word ''
-      deny   @afd.check_word 'a'
-      deny   @afd.check_word 'b'
-      deny   @afd.check_word 'aa'
-      assert @afd.check_word 'ab'
-      deny   @afd.check_word 'aba'
+      deny   load_afd.check_word ''
+      deny   load_afd.check_word 'a'
+      deny   load_afd.check_word 'b'
+      deny   load_afd.check_word 'aa'
+      assert load_afd.check_word 'ab'
+      deny   load_afd.check_word 'aba'
     end
   end
 
   describe 'deterministic?' do
     it 'returns true if the automaton is deterministic' do
-      assert @afd.deterministic?
-      deny @afnd.deterministic?
+      assert load_afd.deterministic?
+      deny   load_afnd.deterministic?
     end
   end
 
   describe 'get_deterministic' do
     it 'returns a deterministic version of the Automaton' do
-      afd = @afnd.get_deterministic
+      afd = load_afnd.get_deterministic
 
       assert afd.deterministic?
       assert afd.check_word 'a'
@@ -39,19 +45,14 @@ describe Automaton do
   end
 
   describe 'closure' do
-    before do
-      file = File.expand_path(File.dirname(__FILE__) + '/fixtures/automaton/ab-nd-cy')
-      @cycle = Automaton.from_file file
-    end
-
     it 'returns the closure of the Automaton' do
 
     end
 
     it 'cycle' do
-      deny @cycle.deterministic?
+      deny load_cycle.deterministic?
 
-      afd = @cycle.get_deterministic
+      afd = load_cycle.get_deterministic
 
       assert afd.deterministic?
     end
@@ -67,7 +68,7 @@ describe RegularExpression do
   before do
     file = File.expand_path(File.dirname(__FILE__) + '/fixtures/regexp/ab')
     r = RegularExpression.from_file file
-    a = Automaton.from_regular_expression r, ThompsonConstructionVisitor
+    a = r.to_automaton
   end
 
   it 'example' do

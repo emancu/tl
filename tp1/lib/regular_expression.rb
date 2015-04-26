@@ -41,6 +41,10 @@ class RegularExpression
     @values = values
   end
 
+  def to_automaton
+    ThompsonConstructionVisitor.visit self
+  end
+
   def self.factory(type)
     Object.const_get(:"#{type.capitalize}RegularExpression")
   end
@@ -82,7 +86,6 @@ class SimpleRegularExpression < RegularExpression
   attr_accessor :char
 
   def initialize(line)
-    require 'pry'; binding.pry
     @char = line.strip
   end
 

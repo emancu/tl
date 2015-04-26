@@ -11,27 +11,35 @@ def match_params?(params, expected_params, expected_size = nil)
   end
 end
 
+def write_dot_file(file, automaton)
+  File.write file, automaton.to_dot
+end
+
 params = ARGV[0..-1]
 if match_params?(params, {0 => "-leng", 2 => "-aut"})
   regexp = RegularExpression.from_file params[1]
-  automaton = Automaton.from_regular_expression regexp, ThompsonConstructionVisitor
+  automaton = regexp.to_automaton
   minimum = automaton.get_minimum
-  File.write(params[3], minimum.to_dot)
+
+  write_dot_file params[3], minimum
 elsif match_params?(params, {0 => "-aut"}, 3)
   automaton = Automaton.from_file params[1]
   puts automaton.check_word(params[2]).to_s.upcase
 elsif match_params?(params, {0 => "-aut", 2 => "-dot"})
   automaton = Automaton.from_file params[1]
-  File.write(params[3], automaton.to_dot)
+
+  write_dot_file params[3], automaton
 elsif match_params?(params, {0 => "-intersec", 1 => "-aut1", 3 => "-aut2", 5 => "-aut"}, 7)
   automaton = Automaton.from_file params[2]
   automaton2 = Automaton.from_file params[4]
   intersection = automaton.get_intersection_with(automaton2)
-  File.write(params[6], intersection.to_dot)
+
+  write_dot_file params[6], intersection
 elsif match_params?(params, {0 => "-complemento", 1 => "-aut1", 3 => "-aut"}, 5)
   automaton = Automaton.from_file params[2]
   complement = automaton.get_complement
-  File.write(params[4], complement.to_dot)
+
+  write_dot_file params[4], complemento
 elsif match_params?(params, {0 => "-equival", 1 => "-aut1", 3 => "-aut2"}, 5)
   automaton = Automaton.from_file params[2]
   automaton.rename_nodes
