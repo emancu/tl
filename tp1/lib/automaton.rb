@@ -24,6 +24,7 @@ class Automaton
   end
 
   def initialize
+    @prefix = 'a'
     @states = []
     @alphabet = []
     @final_states = []
@@ -53,44 +54,40 @@ class Automaton
     final_states.include? current_node
   end
 
+  def intersect(automaton)
+    automaton.rename_states
 
-  def get_intersection_with(automaton)
-    automaton.rename_nodes
     intersection = Automaton.new
-    intersection.alphabet = self.alphabet & automaton.alphabet
-    intersection.states = self.states.product automaton.states
-    intersection.states.map!{|states| states.join("-")}
+    intersection.alphabet = alphabet & automaton.alphabet
     intersection.initial_state = "#{initial_state}-#{automaton.initial_state}"
+    intersection.states = merge_states states, automaton.states
+    intersection.final_states = merge_states final_states, automaton.final_states
 
     intersection.states.each do |from_state|
       from_1, from_2 = from_state.split("-")
-      intersection.final_states << from_state if final_states.include?(from_1) && automaton.final_states.include?(from_2)
+
       intersection.states.each do |to_state|
         to_1, to_2 = to_state.split("-")
+
         intersection.alphabet.each do |char|
-          if (transition_from_to_with?(from_1, to_1, char) && automaton.transition_from_to_with?(from_2, to_2, char))
+          if (transition?(from_1, to_1, char) && automaton.transition?(from_2, to_2, char))
             intersection.add_transition(from_state, char, to_state)
           end
         end
       end
     end
 
-    intersection.rename_nodes
-    intersection.get_minimum
-  end
-
-  #private
-  def transition_from_to_with?(from, to, with)
-    graph[from] && !graph[from][with].nil? && graph[from][with].include?(to)
+    intersection.rename_states
+    intersection.minimize
   end
 
   # http://en.wikipedia.org/wiki/DFA_minimization#Brzozowski.27s_algorithm
-  def get_minimum
+  def minimize
     det = get_deterministic
 
-    rev = det.get_reverse
+    rev = det.reverse
     det2 = rev.get_deterministic
-    rev2 = det2.get_reverse
+    rev2 = det2.reverse
 
     minimum = rev2.get_deterministic
     minimum.remove_terminal
@@ -114,27 +111,27 @@ class Automaton
     self
   end
 
-  def get_reverse
-    reverse = Automaton.new
-    reverse.alphabet = alphabet
-    reverse.states = states
-    reverse.initial_state = "#{@@name}i"
+  def reverse
+    reversed = Automaton.new
+    reversed.alphabet = alphabet
+    reversed.states = states
+    reversed.initial_state = "#{@@name}i"
     @@name.next!
-    reverse.final_states = [initial_state]
+    reversed.final_states = [initial_state]
 
     graph.each do |node_from, node_transitions|
       node_transitions.each do |char, nodes|
         nodes.each do |node_to|
-          reverse.add_transition(node_to, char, node_from)
+          reversed.add_transition(node_to, char, node_from)
         end
       end
     end
 
     final_states.each do |final|
-      reverse.add_transition(reverse.initial_state, '', final)
+      reversed.add_transition(reversed.initial_state, '', final)
     end
 
-    reverse
+    reversed
   end
 
   def get_complement
@@ -151,7 +148,7 @@ class Automaton
   end
 
   def get_union_with(automaton_2)
-    automaton_2.rename_nodes
+    automaton_2.rename_states
 
     union = Automaton.new
     union.alphabet = (alphabet + automaton_2.alphabet).uniq
@@ -231,6 +228,8 @@ class Automaton
   end
 
   def get_deterministic
+    return self if deterministic?
+
     initial = self.closure_lambda([self.initial_state])
     is = initial.sort.join('-')
 
@@ -257,28 +256,62 @@ class Automaton
       end
     end
 
-    automaton.rename_nodes
+    automaton.rename_states
   end
 
-  def rename_nodes
+  def rename_states(prefix = @prefix)
     new_names = {}
+
     states.map! do |s|
-      new_names[s] ||= "#{@@name}#{new_names.keys.size}"
+      new_names[s] ||= "#{prefix}#{new_names.keys.size}"
     end
 
     self.initial_state = new_names[initial_state]
     final_states.map! {|s| new_names[s]}
 
-    self.graph = Hash[graph.map {|k, v| [new_names[k], Hash[v.map {|k2, v2| [k2, v2.map {|a| new_names[a]}] }]  ] }]
-    self.graph.default = {}
-    @@name.next!
+    # Rename graph transitions
+    new_graph = Hash.new { |hash, key| hash[key] = {} }
+
+    graph.map do |from, with|
+      from_key = new_names[from]
+      with.map do |w, tos|
+        new_graph[from_key][w] = tos.map { |a| new_names[a] }
+      end
+    end
+
+    @prefix.next! if prefix == @prefix
+    self.graph = new_graph
 
     self
   end
 
   def closure(nodes, char)
+    result = bfs nodes.dup, char
+
+    closure_lambda result
+  end
+
+  def closure_lambda(nodes)
+    result = nodes
+    result.concat bfs(nodes.dup, '')
+
+    result.uniq
+  end
+
+  protected
+
+  def transition?(from, to, with)
+    Array(graph[from][with]).include? to
+  end
+
+  private
+
+  def merge_states(states_a, states_b)
+    states_a.product(states_b).map { |s| s.join('-') }
+  end
+
+  def bfs(to_review, char)
     result = []
-    to_review = nodes.dup
     visited = []
 
     until to_review.empty?
@@ -288,33 +321,10 @@ class Automaton
       to_review = to_review.uniq - visited
       aux = Array(graph[current_node][char])
 
-      result += aux
-    end
-
-    result.uniq!
-
-    result = closure_lambda result
-
-    result
-  end
-
-  def closure_lambda(nodes)
-    result = nodes
-    to_review = nodes.dup
-    visited = []
-
-    until to_review.empty?
-      current_node = to_review.shift
-      visited << current_node
-
-      to_review = to_review.uniq - visited
-      aux = Array(graph[current_node][''])
-
-      to_review += aux
+      to_review += aux if char == ''
       result += aux
     end
 
     result.uniq
   end
-
 end
