@@ -135,17 +135,17 @@ class Automaton
     reversed
   end
 
-  def get_complement
+  def complement
     make_complete!
 
-    complement = Automaton.new
-    complement.alphabet = alphabet
-    complement.states = states
-    complement.graph = graph
-    complement.initial_state = initial_state
-    complement.final_states = states - final_states
+    complemented = Automaton.new
+    complemented.alphabet = alphabet.dup
+    complemented.states = states.dup
+    complemented.graph = graph.dup # Make deep clone
+    complemented.initial_state = initial_state.dup
+    complemented.final_states = states - final_states
 
-    complement
+    complemented
   end
 
   def get_union_with(automaton_2)

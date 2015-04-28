@@ -38,7 +38,7 @@ elsif match_params?(params, {0 => "-intersec", 1 => "-aut1", 3 => "-aut2", 5 => 
   write_dot_file params[6], intersection
 elsif match_params?(params, {0 => "-complemento", 1 => "-aut1", 3 => "-aut"}, 5)
   automaton = Automaton.from_file params[2]
-  complement = automaton.get_complement
+  complement = automaton.complement
 
   write_dot_file params[4], complemento
 elsif match_params?(params, {0 => "-equival", 1 => "-aut1", 3 => "-aut2"}, 5)
@@ -46,8 +46,8 @@ elsif match_params?(params, {0 => "-equival", 1 => "-aut1", 3 => "-aut2"}, 5)
   automaton.rename_nodes
   automaton2 = Automaton.from_file params[4]
 
-  automaton_complement = automaton.get_complement
-  automaton2_complement = automaton2.get_complement
+  automaton_complement = automaton.complement
+  automaton2_complement = automaton2.complement
 
   intersection_1 = automaton.intersect automaton2_complement
   intersection_1.rename_nodes

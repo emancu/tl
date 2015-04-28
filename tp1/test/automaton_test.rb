@@ -108,8 +108,13 @@ describe Automaton do
     end
   end
 
-  it 'reads lambda from the file' do
+  describe 'complement' do
+    it 'returns an automaton representing the complement' do
+      afd = load_afd
+      complemented = afd.complement
 
+      assert_equal (afd.states - afd.final_states), complemented.final_states
+    end
   end
 
   describe 'intersection' do
