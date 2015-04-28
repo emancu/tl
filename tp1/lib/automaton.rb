@@ -93,18 +93,19 @@ class Automaton
     minimum.remove_terminal
   end
 
-  # Ask if this is neccessary, improve code!
   def remove_terminal
-    states.each do |state|
-      final = !(final_states.include?(state)) && graph[state].all? {|key, values| values == [state]}
-      if final
-        self.states.reject! { |node| node == state }
-        self.graph.reject! { |node| node == state }
-        graph.each do |node, node_transitions|
-          node_transitions.each do |char, nodes|
-            nodes.reject! { |node| node == state }
-          end
-        end
+    terminal_states = []
+
+    terminal_states = (states - final_states).select do |state|
+       graph[state].all? {|_, values| values == [state]}
+    end
+
+    terminal_states.each do |state|
+      states.delete state
+      graph.delete state
+
+      graph.each do |_, node_transitions|
+        node_transitions.each{ |_, nodes| nodes.delete state}
       end
     end
 
@@ -292,10 +293,7 @@ class Automaton
   end
 
   def closure_lambda(nodes)
-    result = nodes
-    result.concat bfs(nodes.dup, '')
-
-    result.uniq
+    nodes.concat(bfs(nodes.dup, '')).uniq
   end
 
   protected
