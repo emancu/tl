@@ -286,15 +286,17 @@ class Automaton
     final_states.map! { |s| new_names[s] }
 
     # Rename graph transitions
-    new_graph = Hash.new { |hash, key| hash[key] = {} }
+    new_graph = {}
 
     graph.map do |from, with|
       from_key = new_names[from]
       with.map do |w, tos|
+        new_graph[from_key] ||= {}
         new_graph[from_key][w] = tos.map { |a| new_names[a] }
       end
     end
 
+    require 'pry'; binding.pry
     @prefix = prefix.next
     self.graph = new_graph
 
@@ -348,10 +350,7 @@ class Automaton
   end
 
   def deep_dup(graph)
-    require 'pry'; binding.pry if graph.default
-
     graph.default = nil
     Marshal.load Marshal.dump(graph)
-
   end
 end
