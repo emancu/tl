@@ -204,6 +204,20 @@ describe Automaton do
       assert_equal 'u', afd.instance_variable_get(:@prefix)
     end
   end
+
+  describe 'as' do
+    before do
+      @path = File.dirname(__FILE__) + '/fixtures/'
+    end
+
+    it 'a' do
+      regexp = RegularExpression.from_file File.expand_path(@path + 'regexp1.txt')
+      automaton = Automaton.from_file File.expand_path(@path + 'af1.txt')
+
+      assert regexp.to_automaton.equivalent? automaton
+
+    end
+  end
 end
 
 describe RegularExpression do

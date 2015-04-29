@@ -149,12 +149,12 @@ class Automaton
   def equivalent?(automaton)
     prefix = @prefix
     self_complement = self.complement
-    automaton_complement = automaton2.complement
+    automaton_complement = automaton.complement
 
     intersection_1 = self.intersect automaton_complement
-    intersection_1.rename_nodes prefix.next!
+    intersection_1.rename_states prefix.next!
     intersection_2 = self_complement.intersect automaton
-    intersection_2.rename_nodes prefix.next!
+    intersection_2.rename_states prefix.next!
 
     union = intersection_1.union intersection_2
 
