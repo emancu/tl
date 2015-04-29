@@ -1,0 +1,12 @@
+a0	a1	a2	a3
+t	p
+a0
+a3
+a0	t	a1
+a0	p	a2
+a1	t	a2
+a1	p	a3
+a2	t	a2
+a2	p	a2
+a3	t	a2
+a3	p	a2
