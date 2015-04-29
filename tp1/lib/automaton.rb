@@ -91,7 +91,7 @@ class Automaton
     rev = det.brzozowski_reverse
     minimum = rev.brzozowski_reverse
 
-    minimum #.remove_terminal
+    minimum
   end
 
   def remove_terminal
