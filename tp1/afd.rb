@@ -45,7 +45,7 @@ elsif match_params?(params, { 0 => '-complemento', 1 => '-aut1', 3 => '-aut' }, 
   automaton = Automaton.from_file params[2]
   complement = automaton.complement
 
-  write_automata_file params[4], complement
+  write_automata_file params[4], complement.minimize
 elsif match_params?(params, { 0 => '-equival', 1 => '-aut1', 3 => '-aut2' }, 5)
   automaton = Automaton.from_file params[2]
   automaton2 = Automaton.from_file params[4]
