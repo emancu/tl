@@ -106,6 +106,19 @@ describe Automaton do
 
       assert_equal expected.strip, load_afd.to_dot
     end
+
+    it 'return a representation of the Automaton using TL-lang' do
+      expected = <<-EOS.gsub(/^ {8}/, '')
+        q0	q1	q2
+        a	b
+        q0
+        q2
+        q0	a	q1
+        q1	b	q2
+      EOS
+
+      assert_equal expected, load_afd.to_file
+    end
   end
 
   describe 'complement' do
