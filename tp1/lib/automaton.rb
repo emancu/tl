@@ -1,4 +1,5 @@
 require_relative 'dot_presenter'
+require_relative 'file_presenter'
 
 class Automaton
   attr_accessor :graph, :states, :alphabet, :initial_state, :final_states
@@ -39,6 +40,10 @@ class Automaton
 
   def to_dot
     DotPresenter.new(self).output
+  end
+
+  def to_file
+    FilePresenter.new(self).output
   end
 
   def check_word(word)
