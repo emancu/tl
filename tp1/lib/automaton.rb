@@ -325,4 +325,14 @@ class Automaton
 
     result.uniq
   end
+
+  def deep_dup(graph)
+    default = graph.default
+    graph.default = nil
+    result = Marshal.load Marshal.dump(graph)
+
+    result.default = graph.default = default
+
+    result
+  end
 end
