@@ -1,7 +1,0 @@
-q0	q1	q2	q3
-a	l	e
-q0
-q3
-q0	a	q1
-q1	l	q2
-q2	e	q3

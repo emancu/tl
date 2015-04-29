@@ -15,7 +15,7 @@ class Main
   def self.check_string(deterministic_file, string)
     automaton = Automaton.from_file deterministic_file
 
-    puts automaton.check_word(string).to_s.upcase
+    automaton.check_word(string)
   end
 
   def self.export_to_dot(deterministic_file, output_file)
@@ -43,18 +43,16 @@ class Main
     automaton = Automaton.from_file aut1
     automaton2 = Automaton.from_file aut2
 
-    result = automaton.equivalent? automaton2
-
-    puts result.to_s.upcase
+    automaton.equivalent? automaton2
   end
 
   private
 
-  def write_dot_file(file, automaton)
+  def self.write_dot_file(file, automaton)
     File.write file, automaton.to_dot
   end
 
-  def write_automata_file(file, automaton)
+  def self.write_automata_file(file, automaton)
     File.write file, automaton.to_file
   end
 end

@@ -14,7 +14,9 @@ params = ARGV[0..-1]
 if match_params?(params, 0 => '-leng', 2 => '-aut')
   Main.minimize_from_regexp params[1], params[3]
 elsif match_params?(params, { 0 => '-aut' }, 3)
-  Main.check_string params[1], params[2]
+  res = Main.check_string params[1], params[2]
+
+  puts res.to_s.upcase
 elsif match_params?(params, 0 => '-aut', 2 => '-dot')
   Main.export_to_dot params[1], params[3]
 elsif match_params?(params, { 0 => '-intersec', 1 => '-aut1', 3 => '-aut2', 5 => '-aut' }, 7)
@@ -22,7 +24,9 @@ elsif match_params?(params, { 0 => '-intersec', 1 => '-aut1', 3 => '-aut2', 5 =>
 elsif match_params?(params, { 0 => '-complemento', 1 => '-aut1', 3 => '-aut' }, 5)
   Main.minimum_complement params[2], params[4]
 elsif match_params?(params, { 0 => '-equival', 1 => '-aut1', 3 => '-aut2' }, 5)
-  Main.equivalent params[2], params[4]
+  res = Main.equivalent params[2], params[4]
+
+  puts res.to_s.upcase
 else
   puts <<-EOS
     Parametros invalidos.
