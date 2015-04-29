@@ -15,13 +15,18 @@ def write_dot_file(file, automaton)
   File.write file, automaton.to_dot
 end
 
+def write_automata_file(file, automaton)
+  File.write file, automaton.to_file
+end
+
 params = ARGV[0..-1]
+
 if match_params?(params, {0 => "-leng", 2 => "-aut"})
   regexp = RegularExpression.from_file params[1]
   automaton = regexp.to_automaton
   minimum = automaton.minimize
 
-  write_dot_file params[3], minimum
+  write_automata_file params[3], minimum
 elsif match_params?(params, {0 => "-aut"}, 3)
   automaton = Automaton.from_file params[1]
 
@@ -35,12 +40,12 @@ elsif match_params?(params, {0 => "-intersec", 1 => "-aut1", 3 => "-aut2", 5 => 
   automaton2 = Automaton.from_file params[4]
   intersection = automaton.intersect automaton2
 
-  write_dot_file params[6], intersection
+  write_automata_file params[6], intersection
 elsif match_params?(params, {0 => "-complemento", 1 => "-aut1", 3 => "-aut"}, 5)
   automaton = Automaton.from_file params[2]
   complement = automaton.complement
 
-  write_dot_file params[4], complemento
+  write_automata_file params[4], complemento
 elsif match_params?(params, {0 => "-equival", 1 => "-aut1", 3 => "-aut2"}, 5)
   automaton = Automaton.from_file params[2]
   automaton.rename_nodes
