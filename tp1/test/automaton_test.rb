@@ -3,7 +3,7 @@ require_relative 'helper'
 describe Automaton do
   describe 'from_file' do
     it 'reads a file and returns the automaton' do
-      file = File.expand_path(File.dirname(__FILE__) + '/fixtures/ab')
+      file = File.expand_path(File.dirname(__FILE__) + '/fixtures/aut_ab.txt')
       from_file = Automaton.from_file file
 
       assert_equal load_afd.states, from_file.states
@@ -151,29 +151,6 @@ describe Automaton do
     end
   end
 
-  # describe 'reverse' do
-    # before do
-      # @original = load_afd
-      # @reversed = @original.reverse
-    # end
-
-    # it 'converts the initial state into a final state' do
-      # assert_equal [@original.initial_state], @reversed.final_states
-    # end
-
-    # it 'makes regular states to the final states' do
-      # assert @original.final_states.include? 'q2'
-      # deny @reversed.final_states.include? 'q2'
-      # assert @reversed.states.include? 'q2'
-    # end
-
-    # it 'creates a new initial state and add lambda-transitions to the old final states' do
-      # is = @reversed.initial_state
-      # deny @original.states.include? is
-      # assert_equal @original.final_states, @reversed.graph[is]['']
-    # end
-  # end
-
   describe 'rename_states' do
     it 'abbreviates and changes every state name in order to improve human reading' do
       afd = load_afd
@@ -205,40 +182,15 @@ describe Automaton do
     end
   end
 
-  describe 'as' do
-    before do
+  describe 'equivalent' do
+    it 'returns if two automatons are equivalent' do
       @path = File.dirname(__FILE__) + '/fixtures/'
-    end
-
-    it 'is equivalent' do
       regexp = RegularExpression.from_file File.expand_path(@path + 'regexp_ab')
-      automaton = Automaton.from_file File.expand_path(@path + 'aut_ab')
+      automaton = Automaton.from_file File.expand_path(@path + 'aut_ab.txt')
 
-      r_min = regexp.to_automaton.minimize
+      r_aut = regexp.to_automaton.get_deterministic
 
-      require 'pry'; binding.pry
-      assert automaton.equivalent? r_min
+      assert automaton.equivalent? r_aut
     end
-
-
-    it 'a' do
-      regexp = RegularExpression.from_file File.expand_path(@path + 'regexp1.txt')
-      automaton = Automaton.from_file File.expand_path(@path + 'af1.txt')
-
-      assert false
-      assert regexp.to_automaton.equivalent? automaton
-
-    end
-  end
-end
-
-describe RegularExpression do
-  before do
-    file = File.expand_path(File.dirname(__FILE__) + '/fixtures/regexp/ab')
-    r = RegularExpression.from_file file
-    a = r.to_automaton
-  end
-
-  it 'example' do
   end
 end
