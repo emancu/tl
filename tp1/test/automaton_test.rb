@@ -3,7 +3,7 @@ require_relative 'helper'
 describe Automaton do
   describe 'from_file' do
     it 'reads a file and returns the automaton' do
-      file = File.expand_path(File.dirname(__FILE__) + '/fixtures/automaton/ab.txt')
+      file = File.expand_path(File.dirname(__FILE__) + '/fixtures/ab')
       from_file = Automaton.from_file file
 
       assert_equal load_afd.states, from_file.states
@@ -210,10 +210,22 @@ describe Automaton do
       @path = File.dirname(__FILE__) + '/fixtures/'
     end
 
+    it 'is equivalent' do
+      regexp = RegularExpression.from_file File.expand_path(@path + 'regexp_ab')
+      automaton = Automaton.from_file File.expand_path(@path + 'aut_ab')
+
+      r_min = regexp.to_automaton.minimize
+
+      require 'pry'; binding.pry
+      assert automaton.equivalent? r_min
+    end
+
+
     it 'a' do
       regexp = RegularExpression.from_file File.expand_path(@path + 'regexp1.txt')
       automaton = Automaton.from_file File.expand_path(@path + 'af1.txt')
 
+      assert false
       assert regexp.to_automaton.equivalent? automaton
 
     end
