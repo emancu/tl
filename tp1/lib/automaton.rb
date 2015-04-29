@@ -85,11 +85,9 @@ class Automaton
   def minimize
     det = get_deterministic
 
-    rev = det.reverse
-    det2 = rev.get_deterministic
-    rev2 = det2.reverse
+    rev = det.brzozowski_reverse
 
-    minimum = rev2.get_deterministic
+    minimum = rev.brzozowski_reverse
     minimum.remove_terminal
   end
 
@@ -112,27 +110,26 @@ class Automaton
     self
   end
 
-  def reverse
-    reversed = Automaton.new
-    reversed.alphabet = alphabet
-    reversed.states = states
-    reversed.initial_state = "#{@@name}i"
-    @@name.next!
-    reversed.final_states = [initial_state]
+  # The reverting step in Brzozowski's Algorithm does not introduce a new virtual
+  # starting state that leads to the old accepting states via lambda-transitions.
+  # Instead it allows multiple starting states, which is no big problem,
+  # if you construct the product-automaton anyway right after the reversion.
+  def brzozowski_reverse
+    brzozowski = Automaton.new
+    brzozowski.alphabet = alphabet.dup
+    brzozowski.states = states.dup
+    brzozowski.final_states = [initial_state]
 
     graph.each do |node_from, node_transitions|
       node_transitions.each do |char, nodes|
         nodes.each do |node_to|
-          reversed.add_transition(node_to, char, node_from)
+          brzozowski.add_transition(node_to, char, node_from)
         end
       end
     end
 
-    final_states.each do |final|
-      reversed.add_transition(reversed.initial_state, '', final)
-    end
-
-    reversed
+    initial_closure = closure_lambda(final_states)
+    brzozowski.get_deterministic initial_closure
   end
 
   def complement
@@ -228,31 +225,31 @@ class Automaton
     !has_lambda && only_one_to_node
   end
 
-  def get_deterministic
-    return self if deterministic?
-
-    initial = self.closure_lambda([self.initial_state])
-    is = initial.sort.join('-')
+  def get_deterministic(initial = nil)
+    initial ||= self.closure_lambda [initial_state]
+    is = initial.sort!.join('-')
 
     automaton = Automaton.new
     automaton.alphabet = alphabet
     automaton.states << is
     automaton.initial_state = is
-    automaton.final_states << is if (is.split("-") & final_states).any?
+    automaton.final_states << is if (initial & final_states).any?
 
-    current_state = is
     to_review = [is]
     until to_review.empty?
       current_state = to_review.shift
-      current_nodes = current_state.split("-")
+      current_nodes = current_state.split('-')
+
       alphabet.each do |char|
         new_nodes = closure(current_nodes, char)
         new_state = new_nodes.sort.join('-')
+
         unless automaton.states.include? new_state
           automaton.states << new_state
-          automaton.final_states << new_state if (new_state.split("-") & final_states).any?
+          automaton.final_states << new_state if (new_state.split('-') & final_states).any?
           to_review << new_state
         end
+
         automaton.add_transition(current_state, char, new_state)
       end
     end

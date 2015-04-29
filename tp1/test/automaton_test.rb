@@ -132,28 +132,28 @@ describe Automaton do
     end
   end
 
-  describe 'reverse' do
-    before do
-      @original = load_afd
-      @reversed = @original.reverse
-    end
+  # describe 'reverse' do
+    # before do
+      # @original = load_afd
+      # @reversed = @original.reverse
+    # end
 
-    it 'converts the initial state into a final state' do
-      assert_equal [@original.initial_state], @reversed.final_states
-    end
+    # it 'converts the initial state into a final state' do
+      # assert_equal [@original.initial_state], @reversed.final_states
+    # end
 
-    it 'makes regular states to the final states' do
-      assert @original.final_states.include? 'q2'
-      deny @reversed.final_states.include? 'q2'
-      assert @reversed.states.include? 'q2'
-    end
+    # it 'makes regular states to the final states' do
+      # assert @original.final_states.include? 'q2'
+      # deny @reversed.final_states.include? 'q2'
+      # assert @reversed.states.include? 'q2'
+    # end
 
-    it 'creates a new initial state and add lambda-transitions to the old final states' do
-      is = @reversed.initial_state
-      deny @original.states.include? is
-      assert_equal @original.final_states, @reversed.graph[is]['']
-    end
-  end
+    # it 'creates a new initial state and add lambda-transitions to the old final states' do
+      # is = @reversed.initial_state
+      # deny @original.states.include? is
+      # assert_equal @original.final_states, @reversed.graph[is]['']
+    # end
+  # end
 
   describe 'rename_states' do
     it 'abbreviates and changes every state name in order to improve human reading' do
