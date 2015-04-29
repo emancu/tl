@@ -187,17 +187,14 @@ class Automaton
   def make_complete!
     return if complete?
 
-    graph.default = {}
-
     terminal = 'qt'
     states << terminal
     states.each do |state|
-      (alphabet - graph[state].keys).each do |label|
+      labels = (graph[state] || {}).keys
+      (alphabet - labels).each do |label|
         add_transition(state, label, terminal)
       end
     end
-
-    graph.default = nil
 
     self
   end
