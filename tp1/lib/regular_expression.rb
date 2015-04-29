@@ -18,7 +18,7 @@ class RegularExpression
     amount = amount.to_i
     values = []
 
-    amount.times do |x|
+    amount.times do |_|
       line = file.readline
 
       matches = line.match SPECIAL
@@ -34,7 +34,7 @@ class RegularExpression
   end
 
   def self.new_from_file(file, amount)
-    object = new read_file(file, amount)
+    new read_file(file, amount)
   end
 
   def initialize(values)
@@ -63,7 +63,7 @@ end
 class StarRegularExpression < RegularExpression
   def to_s
     str = @values.first.to_s
-    str = "(#{str})" unless str.match /^\(.*\)$/
+    str = "(#{str})" unless str.match(/^\(.*\)$/)
     str + '*'
   end
 

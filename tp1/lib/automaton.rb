@@ -4,7 +4,7 @@ require_relative 'file_presenter'
 class Automaton
   attr_accessor :graph, :states, :alphabet, :initial_state, :final_states
 
-  @@name = "a"
+  @@name = 'a'
 
   def self.from_file(file)
     automaton = new
@@ -16,7 +16,7 @@ class Automaton
     automaton.final_states = f.readline.strip.split(/\t/)
 
     f.each do |line|
-      automaton.add_transition *line.strip.split(/\t/)
+      automaton.add_transition(*line.strip.split(/\t/))
     end
 
     f.close
@@ -69,13 +69,13 @@ class Automaton
     intersection.final_states = merge_states final_states, automaton.final_states
 
     intersection.states.each do |from_state|
-      from_1, from_2 = from_state.split("-")
+      from_1, from_2 = from_state.split('-')
 
       intersection.states.each do |to_state|
-        to_1, to_2 = to_state.split("-")
+        to_1, to_2 = to_state.split('-')
 
         intersection.alphabet.each do |char|
-          if (transition?(from_1, to_1, char) && automaton.transition?(from_2, to_2, char))
+          if transition?(from_1, to_1, char) && automaton.transition?(from_2, to_2, char)
             intersection.add_transition(from_state, char, to_state)
           end
         end
@@ -91,16 +91,14 @@ class Automaton
     det = get_deterministic
 
     rev = det.brzozowski_reverse
-
     minimum = rev.brzozowski_reverse
+
     minimum.remove_terminal
   end
 
   def remove_terminal
-    terminal_states = []
-
     terminal_states = (states - final_states).select do |state|
-       graph[state].all? {|_, values| values == [state]}
+      graph[state].all? { |_, values| values == [state] }
     end
 
     terminal_states.each do |state|
@@ -108,7 +106,7 @@ class Automaton
       graph.delete state
 
       graph.each do |_, node_transitions|
-        node_transitions.each{ |_, nodes| nodes.delete state}
+        node_transitions.each { |_, nodes| nodes.delete state }
       end
     end
 
@@ -143,7 +141,7 @@ class Automaton
     complemented = Automaton.new
     complemented.alphabet = alphabet.dup
     complemented.states = states.dup
-    complemented.graph = graph.dup # Make deep clone
+    complemented.graph = deep_dup graph
     complemented.initial_state = initial_state.dup
     complemented.final_states = states - final_states
 
@@ -157,7 +155,7 @@ class Automaton
     union.alphabet = (alphabet + automaton_2.alphabet).uniq
     is, fs = "#{@@name}i", "#{@@name}f"
     @@name.next!
-    union.states = ([is,fs] + (states) + automaton_2.states)
+    union.states = ([is, fs] + (states) + automaton_2.states)
     union.graph = graph.merge automaton_2.graph
     union.graph.default = {}
     union.initial_state = is
@@ -179,7 +177,7 @@ class Automaton
   def make_complete!
     return if complete?
 
-    terminal = "qt"
+    terminal = 'qt'
     states << terminal
     states.each do |state|
       (alphabet - graph[state].keys).each do |label|
@@ -205,7 +203,7 @@ class Automaton
 
       to_review = to_review.uniq - visited
       aux = []
-      if !graph[current_node].nil?
+      unless graph[current_node].nil?
         alphabet.each do |char|
           aux += Array(graph[current_node][char])
         end
@@ -221,17 +219,17 @@ class Automaton
 
   def deterministic?
     labels = graph.values.map(&:keys)
-    has_lambda = labels.flatten.include? ""
+    has_lambda = labels.flatten.include? ''
 
     only_one_to_node = graph.values.all? do |node_transitions|
-      node_transitions.values.all? { |transitions| transitions.length <= 1}
+      node_transitions.values.all? { |transitions| transitions.length <= 1 }
     end
 
     !has_lambda && only_one_to_node
   end
 
   def get_deterministic(initial = nil)
-    initial ||= self.closure_lambda [initial_state]
+    initial ||= closure_lambda [initial_state]
     is = initial.sort!.join('-')
 
     automaton = Automaton.new
@@ -270,7 +268,7 @@ class Automaton
     end
 
     self.initial_state = new_names[initial_state]
-    final_states.map! {|s| new_names[s]}
+    final_states.map! { |s| new_names[s] }
 
     # Rename graph transitions
     new_graph = Hash.new { |hash, key| hash[key] = {} }

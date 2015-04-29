@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 #
-require_relative "lib/automaton"
-require_relative "lib/regular_expression"
-require_relative "lib/thompson_construction_visitor"
+require_relative 'lib/automaton'
+require_relative 'lib/regular_expression'
+require_relative 'lib/thompson_construction_visitor'
 
 def match_params?(params, expected_params, expected_size = nil)
   size_ok = params.size == (expected_size || expected_params.keys.size * 2)
@@ -21,32 +21,32 @@ end
 
 params = ARGV[0..-1]
 
-if match_params?(params, {0 => "-leng", 2 => "-aut"})
+if match_params?(params, 0 => '-leng', 2 => '-aut')
   regexp = RegularExpression.from_file params[1]
   automaton = regexp.to_automaton
   minimum = automaton.minimize
 
   write_automata_file params[3], minimum
-elsif match_params?(params, {0 => "-aut"}, 3)
+elsif match_params?(params, { 0 => '-aut' }, 3)
   automaton = Automaton.from_file params[1]
 
   puts automaton.check_word(params[2]).to_s.upcase
-elsif match_params?(params, {0 => "-aut", 2 => "-dot"})
+elsif match_params?(params, 0 => '-aut', 2 => '-dot')
   automaton = Automaton.from_file params[1]
 
   write_dot_file params[3], automaton
-elsif match_params?(params, {0 => "-intersec", 1 => "-aut1", 3 => "-aut2", 5 => "-aut"}, 7)
+elsif match_params?(params, { 0 => '-intersec', 1 => '-aut1', 3 => '-aut2', 5 => '-aut' }, 7)
   automaton = Automaton.from_file params[2]
   automaton2 = Automaton.from_file params[4]
   intersection = automaton.intersect automaton2
 
   write_automata_file params[6], intersection
-elsif match_params?(params, {0 => "-complemento", 1 => "-aut1", 3 => "-aut"}, 5)
+elsif match_params?(params, { 0 => '-complemento', 1 => '-aut1', 3 => '-aut' }, 5)
   automaton = Automaton.from_file params[2]
   complement = automaton.complement
 
-  write_automata_file params[4], complemento
-elsif match_params?(params, {0 => "-equival", 1 => "-aut1", 3 => "-aut2"}, 5)
+  write_automata_file params[4], complement
+elsif match_params?(params, { 0 => '-equival', 1 => '-aut1', 3 => '-aut2' }, 5)
   automaton = Automaton.from_file params[2]
   automaton.rename_nodes
   automaton2 = Automaton.from_file params[4]

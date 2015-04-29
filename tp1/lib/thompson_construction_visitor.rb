@@ -22,7 +22,7 @@ class ThompsonConstructionVisitor
     automaton
   end
 
-  def visit_lambda(lambda_expression)
+  def visit_lambda(_lambda_expression)
     a = new_automaton
     a.add_transition a.initial_state, '', a.final_states.first
 
@@ -55,7 +55,7 @@ class ThompsonConstructionVisitor
     to_join.each do |to_join_automatom|
       automaton.add_transition is, '', to_join_automatom.initial_state
 
-    # Add lambda from each final of each automatom to result final state
+      # Add lambda from each final of each automatom to result final state
       to_join_automatom.final_states.each do |final_state|
         automaton.add_transition final_state, '', fs
       end

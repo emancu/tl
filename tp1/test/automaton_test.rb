@@ -28,9 +28,10 @@ describe Automaton do
     it 'adds a transition to the automaton represented in the graph' do
       automaton = Automaton.new
       automaton.add_transition 'from', '1', 'to'
+      expected = { '1' => ['to'] }
 
       deny automaton.graph.empty?
-      assert_equal ({ '1' => ['to']}), automaton.graph['from']
+      assert_equal expected, automaton.graph['from']
     end
 
     it 'accepts multiples destination states for the same transition' do
@@ -47,19 +48,19 @@ describe Automaton do
 
   describe 'check word' do
     it 'returns true when a word is accepted' do
-      deny   load_afd.check_word ''
-      deny   load_afd.check_word 'a'
-      deny   load_afd.check_word 'b'
-      deny   load_afd.check_word 'aa'
+      deny load_afd.check_word ''
+      deny load_afd.check_word 'a'
+      deny load_afd.check_word 'b'
+      deny load_afd.check_word 'aa'
       assert load_afd.check_word 'ab'
-      deny   load_afd.check_word 'aba'
+      deny load_afd.check_word 'aba'
     end
   end
 
   describe 'deterministic?' do
     it 'returns true if the automaton is deterministic' do
       assert load_afd.deterministic?
-      deny   load_afnd.deterministic?
+      deny load_afnd.deterministic?
     end
   end
 
@@ -70,14 +71,18 @@ describe Automaton do
       assert afd.deterministic?
       assert afd.check_word 'a'
       assert afd.check_word 'ab'
-      deny   afd.check_word 'b'
-      deny   afd.check_word 'bb'
+      deny afd.check_word 'b'
+      deny afd.check_word 'bb'
+    end
+  end
+
+  describe 'minimize' do
+    it 'returns the minimum DFA which recognizes the same language than the given automaton' do
     end
   end
 
   describe 'closure' do
     it 'returns the closure of the Automaton' do
-
     end
 
     it 'cycle' do
@@ -125,8 +130,9 @@ describe Automaton do
     it 'returns an automaton representing the complement' do
       afd = load_afd
       complemented = afd.complement
+      expected = afd.states - afd.final_states
 
-      assert_equal (afd.states - afd.final_states), complemented.final_states
+      assert_equal expected, complemented.final_states
     end
   end
 
@@ -136,11 +142,11 @@ describe Automaton do
       afnd = load_afnd.get_deterministic
       intersection = afd.intersect load_afnd
 
-      deny   afd.check_word 'a'
+      deny afd.check_word 'a'
       assert afd.check_word 'ab'
       assert afnd.check_word 'a'
       assert afnd.check_word 'ab'
-      deny   intersection.check_word 'a'
+      deny intersection.check_word 'a'
       assert intersection.check_word 'ab'
     end
   end
@@ -176,7 +182,7 @@ describe Automaton do
 
       afd.rename_states
 
-      assert_equal afd.states, old_states.map{|s| s.gsub('q', prefix)}
+      assert_equal afd.states, old_states.map { |s| s.gsub('q', prefix) }
     end
 
     it 'increment the prefix of the automaton' do
@@ -201,7 +207,6 @@ describe Automaton do
 end
 
 describe RegularExpression do
-
   before do
     file = File.expand_path(File.dirname(__FILE__) + '/fixtures/regexp/ab')
     r = RegularExpression.from_file file
@@ -209,7 +214,5 @@ describe RegularExpression do
   end
 
   it 'example' do
-
   end
-
 end
