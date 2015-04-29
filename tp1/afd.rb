@@ -48,21 +48,11 @@ elsif match_params?(params, { 0 => '-complemento', 1 => '-aut1', 3 => '-aut' }, 
   write_automata_file params[4], complement
 elsif match_params?(params, { 0 => '-equival', 1 => '-aut1', 3 => '-aut2' }, 5)
   automaton = Automaton.from_file params[2]
-  automaton.rename_nodes
   automaton2 = Automaton.from_file params[4]
 
-  automaton_complement = automaton.complement
-  automaton2_complement = automaton2.complement
+  result = automaton.equivalent? automaton2
 
-  intersection_1 = automaton.intersect automaton2_complement
-  intersection_1.rename_nodes
-  intersection_2 = automaton_complement.intersect automaton2
-  intersection_2.rename_nodes
-
-  union = intersection_1.get_union_with(intersection_2)
-  det_union = union.get_deterministic
-
-  puts det_union.empty?.to_s.upcase
+  puts result.to_s.upcase
 else
   puts <<-EOS
     Parametros invalidos.

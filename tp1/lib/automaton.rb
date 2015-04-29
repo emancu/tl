@@ -4,8 +4,6 @@ require_relative 'file_presenter'
 class Automaton
   attr_accessor :graph, :states, :alphabet, :initial_state, :final_states
 
-  @@name = 'a'
-
   def self.from_file(file)
     automaton = new
     f = File.open(file)
@@ -148,30 +146,43 @@ class Automaton
     complemented
   end
 
-  def get_union_with(automaton_2)
-    automaton_2.rename_states
+  def equivalent?(automaton)
+    prefix = @prefix
+    self_complement = self.complement
+    automaton_complement = automaton2.complement
 
-    union = Automaton.new
-    union.alphabet = (alphabet + automaton_2.alphabet).uniq
-    is, fs = "#{@@name}i", "#{@@name}f"
-    @@name.next!
-    union.states = ([is, fs] + (states) + automaton_2.states)
-    union.graph = graph.merge automaton_2.graph
-    union.graph.default = {}
-    union.initial_state = is
-    union.final_states = [fs]
+    intersection_1 = self.intersect automaton_complement
+    intersection_1.rename_nodes prefix.next!
+    intersection_2 = self_complement.intersect automaton
+    intersection_2.rename_nodes prefix.next!
 
-    final_states.each do |final|
-      union.add_transition(final, '', fs)
+    union = intersection_1.union intersection_2
+
+    union.get_deterministic.empty?
+  end
+
+  def union(automaton_2)
+    self.rename_states
+    automaton_2.rename_states @prefix
+    @prefix.next!
+    is, fs = "#{@prefix}i", "#{@prefix}f"
+
+    union_aut = Automaton.new
+    union_aut.alphabet = (alphabet + automaton_2.alphabet).uniq
+    union_aut.states = [is, fs] + states + automaton_2.states
+    union_aut.graph = graph.merge automaton_2.graph
+    union_aut.graph.default = {}
+    union_aut.initial_state = is
+    union_aut.final_states = [fs]
+
+    (final_states + automaton_2.final_states).each do |final|
+      union_aut.add_transition(final, '', fs)
     end
-    automaton_2.final_states.each do |final|
-      union.add_transition(final, '', fs)
-    end
 
-    union.add_transition(is, '', initial_state)
-    union.add_transition(is, '', automaton_2.initial_state)
+    union_aut.add_transition(is, '', initial_state)
+    union_aut.add_transition(is, '', automaton_2.initial_state)
 
-    union
+    union_aut
   end
 
   def make_complete!
@@ -280,7 +291,7 @@ class Automaton
       end
     end
 
-    @prefix.next! if prefix == @prefix
+    @prefix = prefix.next
     self.graph = new_graph
 
     self

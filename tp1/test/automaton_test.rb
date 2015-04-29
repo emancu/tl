@@ -194,14 +194,14 @@ describe Automaton do
       assert_equal prefix.next, afd.instance_variable_get(:@prefix)
     end
 
-    it 'does not increment the prefix of the automaton when it differs from the prefix passed as argument' do
+    it 'replaces the prefix with the next value passed' do
       afd = load_afd
 
       assert_equal 'a', afd.instance_variable_get(:@prefix)
 
       afd.rename_states 't'
 
-      assert_equal 'a', afd.instance_variable_get(:@prefix)
+      assert_equal 'u', afd.instance_variable_get(:@prefix)
     end
   end
 end
