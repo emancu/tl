@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 #
-require_relative 'lib/automaton'
-require_relative 'lib/regular_expression'
-require_relative 'lib/thompson_construction_visitor'
+require_relative 'lib/main'
 
 def match_params?(params, expected_params, expected_size = nil)
   size_ok = params.size == (expected_size || expected_params.keys.size * 2)
@@ -11,48 +9,20 @@ def match_params?(params, expected_params, expected_size = nil)
   end
 end
 
-def write_dot_file(file, automaton)
-  File.write file, automaton.to_dot
-end
-
-def write_automata_file(file, automaton)
-  File.write file, automaton.to_file
-end
-
 params = ARGV[0..-1]
 
 if match_params?(params, 0 => '-leng', 2 => '-aut')
-  regexp = RegularExpression.from_file params[1]
-  automaton = regexp.to_automaton
-  minimum = automaton.minimize
-
-  write_automata_file params[3], minimum
+  Main.minimize_from_regexp params[1], params[3]
 elsif match_params?(params, { 0 => '-aut' }, 3)
-  automaton = Automaton.from_file params[1]
-
-  puts automaton.check_word(params[2]).to_s.upcase
+  Main.check_string params[1], params[2]
 elsif match_params?(params, 0 => '-aut', 2 => '-dot')
-  automaton = Automaton.from_file params[1]
-
-  write_dot_file params[3], automaton
+  Main.export_to_dot params[1], params[3]
 elsif match_params?(params, { 0 => '-intersec', 1 => '-aut1', 3 => '-aut2', 5 => '-aut' }, 7)
-  automaton = Automaton.from_file params[2]
-  automaton2 = Automaton.from_file params[4]
-  intersection = automaton.intersect automaton2
-
-  write_automata_file params[6], intersection
+  Main.minimum_intersection params[2], params[4], params[6]
 elsif match_params?(params, { 0 => '-complemento', 1 => '-aut1', 3 => '-aut' }, 5)
-  automaton = Automaton.from_file params[2]
-  complement = automaton.complement
-
-  write_automata_file params[4], complement.minimize
+  Main.minimum_complement params[2], params[4]
 elsif match_params?(params, { 0 => '-equival', 1 => '-aut1', 3 => '-aut2' }, 5)
-  automaton = Automaton.from_file params[2]
-  automaton2 = Automaton.from_file params[4]
-
-  result = automaton.equivalent? automaton2
-
-  puts result.to_s.upcase
+  Main.equivalent params[2], params[4]
 else
   puts <<-EOS
     Parametros invalidos.

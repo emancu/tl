@@ -27,13 +27,13 @@ class Automaton
     @states = []
     @alphabet = []
     @final_states = []
-    @graph = Hash.new { |hash, key| hash[key] = {} }
+    @graph = {}
   end
 
   def add_transition(from, with, to)
-    @graph[from][with] ||= []
-    @graph[from][with] << to
-    @graph[from][with].uniq!
+    @graph[from] ||= {}
+    @graph[from][with] 
+    @graph[from][with] = (Array(@graph[from][with]) << to).uniq
   end
 
   def to_dot
@@ -49,7 +49,7 @@ class Automaton
 
     current_node = initial_state
     word.each_char do |char|
-      to_nodes = graph[current_node][char]
+      to_nodes = graph[current_node].to_h[char]
       return false if to_nodes.nil?
       current_node = to_nodes.first
     end
@@ -91,7 +91,7 @@ class Automaton
     rev = det.brzozowski_reverse
     minimum = rev.brzozowski_reverse
 
-    minimum.remove_terminal
+    minimum #.remove_terminal
   end
 
   def remove_terminal
@@ -171,7 +171,6 @@ class Automaton
     union_aut.alphabet = (alphabet + automaton_2.alphabet).uniq
     union_aut.states = [is, fs] + states + automaton_2.states
     union_aut.graph = graph.merge automaton_2.graph
-    union_aut.graph.default = {}
     union_aut.initial_state = is
     union_aut.final_states = [fs]
 
@@ -188,6 +187,8 @@ class Automaton
   def make_complete!
     return if complete?
 
+    graph.default = {}
+
     terminal = 'qt'
     states << terminal
     states.each do |state|
@@ -195,12 +196,17 @@ class Automaton
         add_transition(state, label, terminal)
       end
     end
+
+    graph.default = nil
+
+    self
   end
 
   def complete?
     states.all? do |state|
-      graph[state].keys.length == alphabet.length
+      graph[state].keys.length == alphabet.length if graph[state]
     end
+
   end
 
   def empty?
@@ -212,8 +218,9 @@ class Automaton
       current_node = to_review.shift
       visited << current_node
 
-      to_review = to_review.uniq - visited
       aux = []
+      to_review = to_review.uniq - visited
+
       unless graph[current_node].nil?
         alphabet.each do |char|
           aux += Array(graph[current_node][char])
@@ -310,7 +317,8 @@ class Automaton
   protected
 
   def transition?(from, to, with)
-    Array(graph[from][with]).include? to
+    destinatinos = (graph[from] || {})[with]
+    Array(destinatinos).include? to
   end
 
   private
@@ -328,9 +336,14 @@ class Automaton
       visited << current_node
 
       to_review = to_review.uniq - visited
-      aux = Array(graph[current_node][char])
 
-      to_review += aux if char == ''
+      unless graph[current_node]
+        aux = []
+      else
+        aux = Array(graph[current_node][char])
+      end
+
+      to_review += aux - visited if char == ''
       result += aux
     end
 
@@ -338,12 +351,10 @@ class Automaton
   end
 
   def deep_dup(graph)
-    default = graph.default
+    require 'pry'; binding.pry if graph.default
+
     graph.default = nil
-    result = Marshal.load Marshal.dump(graph)
+    Marshal.load Marshal.dump(graph)
 
-    result.default = graph.default = default
-
-    result
   end
 end

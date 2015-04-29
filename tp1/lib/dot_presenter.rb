@@ -17,7 +17,7 @@ class DotPresenter
 
     graph = Hash.new { |hash, key| hash[key] = {} }
     @automaton.states.each do |state|
-      @automaton.graph[state].each do |k, v|
+      @automaton.graph[state].to_h.each do |k, v|
         v.each do |s|
           graph[state][s] ||= []
           graph[state][s] << k
