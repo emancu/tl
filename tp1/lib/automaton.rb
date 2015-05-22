@@ -296,7 +296,6 @@ class Automaton
       end
     end
 
-    require 'pry'; binding.pry
     @prefix = prefix.next
     self.graph = new_graph
 
