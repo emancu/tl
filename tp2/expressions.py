@@ -12,15 +12,23 @@ class Initial(object):
 
 class Node(object):
 
-  def __init__(self, label, children):
+  def __init__(self, label, items):
     self.label = label
-    self.children = children
+    self.items = items
 
   def name(self):
     return str(self.label)
 
+  def _element(self, x):
+    if(x.__class__ == Element or x.__class__ == Node):
+      return x
+    else:
+      return Element(x)
+
   def children(self):
-    return map((lambda x: Element(x)), self.children)
+    return map(self._element, self.items)
+
+
 
 
 class Tempo(object):
