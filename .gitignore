@@ -1,0 +1,6 @@
+
+*.pyc
+
+*.out
+
+tp2/parsetab.py
