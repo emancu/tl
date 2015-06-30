@@ -24,36 +24,78 @@ tokens = [
     'SEMICOLON'
 ]
 
-t_TEMPO = "\#tempo"
-t_COMPASS_V = "\#compas"
-t_FIGURE = "redonda|blanca|negra|corchea|semicorchea|fusa|semifusa"
-t_DURATION = "(redonda|blanca|negra|corchea|semicorchea|fusa|semifusa)[\.]"
-t_CONST = "const"
-t_COMPASS = "compas"
-t_NOTE = "nota"
-t_NOTE_ID = "(do|re|mi|fa|sol|la|si)[\+|\-]"
-t_VOICE = "voz"
-t_SILENCE = "silencio"
-t_NAME = "\w+"
-t_DIV = "/"
-t_COMMA = ","
-t_LCURLYBRACKET = "{"
-t_RCURLYBRACKET = "}"
-t_EQUAL = "="
-t_PLUS = "\+"
-t_TIMES = "\*"
-t_LPAREN = "\("
-t_RPAREN = "\)"
-t_SEMICOLON = ";"
-
-t_ignore_COMMENTS = "//.*"
-
-t_ignore = " \t"
-
+def t_TEMPO(t):
+    "\#tempo"
+    return t
+def t_COMPASS_V(t):
+    "\#compas"
+    return t
+def t_DURATION(t):
+    "(redonda|blanca|negra|corchea|semicorchea|fusa|semifusa)[\.]"
+    return t
+def t_FIGURE(t):
+    "redonda|blanca|negra|corchea|semicorchea|fusa|semifusa"
+    return t
+def t_CONST(t):
+    "const"
+    return t
+def t_COMPASS(t):
+    "compas"
+    return t
+def t_NOTE(t):
+    "nota"
+    return t
+def t_SILENCE(t):
+    "silencio"
+    return t
+def t_NOTE_ID(t):
+    "(do|re|mi|fa|sol|la|si)[\+|\-]?"
+    return t
+def t_VOICE(t):
+    "voz"
+    return t
+def t_REPEAT(t):
+    "repetir"
+    return t
+def t_DIV(t):
+    "/"
+    return t
+def t_COMMA(t):
+    ","
+    return t
+def t_LCURLYBRACKET(t):
+    "{"
+    return t
+def t_RCURLYBRACKET(t):
+    "}"
+    return t
+def t_EQUAL(t):
+    "="
+    return t
+def t_PLUS(t):
+    "\+"
+    return t
+def t_LPAREN(t):
+    "\("
+    return t
+def t_RPAREN(t):
+    "\)"
+    return t
+def t_SEMICOLON(t):
+    ";"
+    return t
 def t_NUMBER(token):
     r"[1-9][0-9]*"
     token.value = int(token.value)
     return token
+
+def t_NAME(t):
+    "\w+"
+    return t
+
+t_ignore_COMMENTS = "//.*"
+
+t_ignore = " \t"
 
 def t_error(token):
     message = "Token desconocido:"
