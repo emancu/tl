@@ -2,6 +2,12 @@ from lexer_rules import tokens
 
 from expressions import Initial, Node, Element, Number
 
+class SemanticException(Exception):
+    pass
+
+# dictionary of names
+names = {}
+
 def p_expression_initial(subexpressions):
   'expression : te co vars'
   subexpressions[0] = Node('S', subexpressions[1:])
@@ -15,7 +21,15 @@ def p_expression_compass(subexpressions):
   subexpressions[0] = Node('co', subexpressions[1:])
 
 def p_vars(subexpressions):
-  'vars : CONST NAME EQUAL cons_val SEMICOLON vars'
+  'vars : vars CONST NAME EQUAL cons_val SEMICOLON'
+  name = subexpressions[3]
+  cons_val = subexpressions[5]
+  if (cons_val.__class__ == Number):
+    names[name] = cons_val.value
+  elif cons_val.value in names:
+    names[name] = names[cons_val.value]
+  else:
+    raise SemanticException("const '" + cons_val.value + "' is undefined")
 
   subexpressions[0] = Node('vars', subexpressions[1:])
 
