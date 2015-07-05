@@ -48,14 +48,14 @@ def t_NOTE(t):
 def t_SILENCE(t):
     "silencio"
     return t
+def t_REPEAT(t):
+    "repetir"
+    return t
 def t_NOTE_ID(t):
     "(do|re|mi|fa|sol|la|si)[\+|\-]?"
     return t
 def t_VOICE(t):
     "voz"
-    return t
-def t_REPEAT(t):
-    "repetir"
     return t
 def t_DIV(t):
     "/"

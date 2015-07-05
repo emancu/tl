@@ -11,9 +11,10 @@ class Initial(object):
 
 class Node(object):
 
-  def __init__(self, label, items):
+  def __init__(self, label, items, attrs = {}):
     self.label = label
     self.items = items
+    self.attributes = attrs
 
   def name(self):
     return str(self.label)
@@ -28,8 +29,9 @@ class Node(object):
     return map(self._element, self.items)
 
 class Element(object):
-  def __init__(self, value):
+  def __init__(self, value, attrs = {}):
     self.value = value
+    self.attributes = attrs
 
   def name(self):
     return str(self.value)
@@ -39,8 +41,9 @@ class Element(object):
 
 class Number(object):
 
-  def __init__(self, value):
+  def __init__(self, value, attrs = {}):
     self.value = value
+    self.attributes = attrs
 
   def name(self):
     return "num: " + str(self.value)

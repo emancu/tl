@@ -41,7 +41,12 @@ file = open('example.mus', 'r')
 
 parser = yacc(module=parser_rules)
 text = file.read()
-ast = parser.parse(text, lexer)
+try:
+    ast = parser.parse(text, lexer)
+    output_file = open("alee.dot", "w")
+    dump_ast(ast, output_file)
+except parser_rules.SemanticException as exception:
+    print "Semantic error: " + str(exception)
+else:
+    print "Syntax is valid."
 
-output_file = open("alee.dot", "w")
-dump_ast(ast, output_file)
