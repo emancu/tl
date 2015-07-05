@@ -64,7 +64,7 @@ def p_expression_voice(s):
 def p_expression_voice_content(se):
   'voice_content : compass_or_repeat voice_content'
   if se[1].attributes['sum'] != util_vars['compass']:
-    raise SemanticException("compass not valid. Sum: " + str(se[1].attributes['sum']) )
+    raise SemanticException("compass not valid. Sum: " + str(se[1].attributes['sum']) + " expected: " + str(util_vars['compass']))
   se[0] = Node('voice_content', se[1:])
 
 def p_expression_voice_content_empty(s):
@@ -91,7 +91,7 @@ def p_expression_compass_content_empty(s):
 
 def p_expression_voice_compass_content_silence(s):
   'compass_content : silence compass_content'
-  s[0] = Node('compass_content', s[1:])
+  s[0] = Node('compass_content', s[1:], {'sum': s[1].attributes['sum'] + s[2].attributes['sum'] })
 
 def p_expression_note(s):
   'note : NOTE LPAREN NOTE_ID COMMA cons_val COMMA figure_duration RPAREN SEMICOLON'
@@ -99,7 +99,7 @@ def p_expression_note(s):
 
 def p_expression_silence(s):
   'silence : SILENCE LPAREN figure_duration RPAREN SEMICOLON'
-  s[0] = Node('silence', s[1:])
+  s[0] = Node('silence', s[1:], {'sum': s[3].attributes['fig_val']})
 
 def p_expression_figure(s):
   'figure_duration : FIGURE'
@@ -107,7 +107,7 @@ def p_expression_figure(s):
 
 def p_expression_duration(s):
   'figure_duration : DURATION'
-  s[0] = Element(s[1])
+  s[0] = Element(s[1], {'fig_val': (1 / figure_values[s[1][0:-1]]) * 1.5})
 
 def p_error(subexpressions):
   import pdb; pdb.set_trace()
