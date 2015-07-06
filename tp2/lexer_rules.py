@@ -24,6 +24,8 @@ tokens = [
     'SEMICOLON'
 ]
 
+def t_COMMENT(t):
+    "//.*"
 def t_TEMPO(t):
     "\#tempo"
     return t
@@ -93,7 +95,6 @@ def t_NAME(t):
     "\w+"
     return t
 
-t_ignore_COMMENTS = "//.*"
 
 t_ignore = " \t"
 
