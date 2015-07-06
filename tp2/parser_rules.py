@@ -10,23 +10,23 @@ util_vars = { 'voices': 0 }
 figure_values = {'redonda': 1, 'blanca': 2, 'negra': 4, 'corchea': 8,
 'semicorchea': 16, 'fusa': 32, 'semifusa': 64}
 
-def p_expression_initial(subexpressions):
+def p_expression_initial(se):
   'expression : te co vars voices'
-  subexpressions[0] = Initial(subexpressions[1:], {'names': names, 'util_vars': util_vars})
+  se[0] = Initial(se[1:], {'names': names, 'util_vars': util_vars})
 
-def p_expression_tempo(subexpressions):
+def p_expression_tempo(se):
   'te : TEMPO FIGURE NUMBER'
-  subexpressions[0] = Tempo(subexpressions[1:])
+  se[0] = Tempo(se[1:])
 
-def p_expression_compass_v(subexpressions):
+def p_expression_compass_v(se):
   'co : COMPASS_V NUMBER DIV NUMBER'
-  util_vars['compass'] = subexpressions[2] / subexpressions[4]
-  subexpressions[0] = DefCompass(subexpressions[1:])
+  util_vars['compass'] = se[2] / se[4]
+  se[0] = DefCompass(se[1:])
 
-def p_vars(subexpressions):
+def p_vars(se):
   'vars : vars CONST NAME EQUAL cons_val SEMICOLON'
-  name = subexpressions[3]
-  cons_val = subexpressions[5]
+  name = se[3]
+  cons_val = se[5]
   if (cons_val.__class__ == Number):
     names[name] = cons_val.value
   elif cons_val.name in names:
@@ -34,9 +34,9 @@ def p_vars(subexpressions):
   else:
     raise SemanticException("const '" + cons_val.name + "' is undefined")
 
-  subexpressions[0] = Node('vars', subexpressions[1:])
+  se[0] = Node('vars', se[1:])
 
-def p_vars_empty(subexpressions):
+def p_vars_empty(se):
   'vars :'
 
 def p_cons_val_number(s):
