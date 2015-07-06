@@ -1,14 +1,3 @@
-class Initial(object):
-
-  def __init__(self, items):
-    self.items = items
-
-  def name(self):
-    return "s"
-
-  def children(self):
-    return self.items
-
 class Node(object):
 
   def __init__(self, label, items, attrs = {}):
@@ -28,7 +17,7 @@ class Node(object):
   def children(self):
     return map(self._element, self.items)
 
-class Main(Node):
+class Initial(Node):
   def __init__(self, items, attrs = {}):
     Node.__init__(self, 'S', items, attrs)
 
@@ -101,7 +90,12 @@ class Voice(Node):
     aux = self.items[-2]
 
     while isinstance(aux, Node):
-      array.append(aux.children()[0])
+      child = aux.children()[0]
+      if isinstance(child, Repeat):
+        array = array + child.compasses()
+      else:
+        array.append(child)
+
       aux = aux.children()[-1]
 
     return array
@@ -121,11 +115,26 @@ class Compass(Node):
 
     return array
 
+class Repeat(Node):
+  def __init__(self, items, attrs = {}):
+    Node.__init__(self, 'Repeat', items, attrs)
+    self.times = items[2].value
+
+  def compasses(self):
+    array = []
+    aux = self.items[-2]
+
+    while isinstance(aux, Node):
+      array.append(aux.children()[0])
+      aux = aux.children()[-1]
+
+    return array * self.times
 
 class Note(Node):
   def __init__(self, items, attrs = {}):
     Node.__init__(self, 'Note', items, attrs)
-    self.note = Note.translation_en()[items[2]]
+
+    self.note = Note.translation_en(items[2])
     self.octave = items[4]
     self.duration = items[6]
 
@@ -133,8 +142,16 @@ class Note(Node):
     return self.note + str(self.octave.value)
 
   @staticmethod
-  def translation_en():
-    return { 'do': 'c', 're': 'd', 'mi': 'e', 'fa': 'f', 'sol': 'g', 'la': 'a', 'si': 'b' }
+  def translation_en(to_translate):
+    translation = { 'do': 'c', 're': 'd', 'mi': 'e', 'fa': 'f', 'sol': 'g', 'la': 'a', 'si': 'b' }
+    aux = to_translate[-1]
+
+    if( aux == '-' or aux == '+'):
+      to_translate = to_translate[:-1]
+    else:
+      aux = ''
+
+    return translation[to_translate] + aux
 
 
 class Silence(Note):

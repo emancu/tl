@@ -52,11 +52,12 @@ def print_output_file(ast, of):
         of.write("000:00:000 Meta TrkName \"Voz %d\"\n" % channel)
         of.write("000:00:000 ProgCh ch=%d prog=%d\n" % (channel, voice.instrument(constants)))
 
+        pulse = 0
+        click = 0
         for compass in voice.compasses():
             pulse = 0
             click = 0
             for note in compass.notes():
-                # import pdb; pdb.set_trace()
 
                 note_clicks = ast.compass().figure_clicks(note.duration.value)
                 vol = 70
@@ -86,9 +87,7 @@ def print_output_file(ast, of):
                     of.write(str_aux)
 
         of.write("%03d:%02d:%03d Meta TrkEnd\n" % (compass_counter, pulse, click))
-
-
-    of.write("TrkEnd\n")
+        of.write("TrkEnd\n")
 
 
 lexer = lex(module=lexer_rules)

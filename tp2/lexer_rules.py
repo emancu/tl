@@ -24,6 +24,7 @@ tokens = [
     'SEMICOLON'
 ]
 
+
 def t_COMMENT(t):
     "//.*"
 def t_TEMPO(t):
@@ -87,7 +88,7 @@ def t_SEMICOLON(t):
     ";"
     return t
 def t_NUMBER(token):
-    r"[1-9][0-9]*"
+    r"[0-9][0-9]*"
     token.value = int(token.value)
     return token
 

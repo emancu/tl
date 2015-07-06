@@ -12,7 +12,7 @@ figure_values = {'redonda': 1, 'blanca': 2, 'negra': 4, 'corchea': 8,
 
 def p_expression_initial(subexpressions):
   'expression : te co vars voices'
-  subexpressions[0] = Main(subexpressions[1:], {'names': names, 'util_vars': util_vars})
+  subexpressions[0] = Initial(subexpressions[1:], {'names': names, 'util_vars': util_vars})
 
 def p_expression_tempo(subexpressions):
   'te : TEMPO FIGURE NUMBER'
@@ -43,9 +43,9 @@ def p_cons_val_number(s):
   'cons_val : NUMBER'
   s[0] = Number(s[1])
 
-def p_cons_val_name(s):
+def p_cons_val_name(se):
   'cons_val : NAME'
-  s[0] = Constant(s[1], names[s[1]])
+  se[0] = Constant(se[1], names[se[1]])
 
 def p_expression_voices(s):
   'voices : voice voices'
@@ -65,9 +65,10 @@ def p_expression_voice(se):
 
 def p_expression_voice_content(se):
   'voice_content : compass_or_repeat voice_content'
+
   if se[1].attributes['sum'] != util_vars['compass']:
     raise SemanticException("compass not valid. Sum: " + str(se[1].attributes['sum']) + " expected: " + str(util_vars['compass']))
-  se[0] = Node('voice_content', se[1:])
+  se[0] = Node('voice_content', se[1:], {'sum': se[1].attributes['sum']})
 
 def p_expression_voice_content_empty(s):
   'voice_content :'
@@ -78,7 +79,7 @@ def p_expression_compass(s):
 
 def p_expression_compass_repeat(s):
   'compass_or_repeat : REPEAT LPAREN cons_val RPAREN LCURLYBRACKET voice_content RCURLYBRACKET'
-  s[0] = Node('repeat', s[1:])
+  s[0] = Repeat(s[1:], {'sum': s[6].attributes['sum']})
 
 def p_expression_compass_empty(s):
   'compass_or_repeat :'
