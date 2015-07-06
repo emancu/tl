@@ -20,7 +20,7 @@ class Node(object):
     return str(self.label)
 
   def _element(self, x):
-    if(x.__class__ == Element or isinstance(x, Node) or x.__class__ == Number):
+    if(isinstance(x, Element) or isinstance(x, Node) or x.__class__ == Number):
       return x
     else:
       return Element(x)
@@ -89,7 +89,7 @@ class Voice(Node):
     instr = self.items[2]
 
     if(isinstance(instr, Constant)):
-      instr = constants[instr.name]
+      instr = constants[instr.name()]
 
     if(isinstance(instr, Number)):
       instr = instr.value
@@ -159,8 +159,11 @@ class Element(object):
 
 class Constant(Element):
   def __init__(self, name, int_value):
-    self.name = name
+    self.var_name = name
     self.value = int_value
+
+  def name(self):
+    return self.var_name
 
 class Number(object):
 
