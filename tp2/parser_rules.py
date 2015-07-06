@@ -27,6 +27,10 @@ def p_vars(se):
   'vars : vars CONST NAME EQUAL cons_val SEMICOLON'
   name = se[3]
   cons_val = se[5]
+
+  if name in names:
+    raise SemanticException("const '" + name + "' is already defined")
+
   if (cons_val.__class__ == Number):
     names[name] = cons_val.value
   elif cons_val.name in names:
