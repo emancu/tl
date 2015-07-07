@@ -15,8 +15,6 @@ def dump_ast(ast, output_file):
     current_number = 2
     while len(queue) > 0:
         node = queue.pop(0)
-#        import pdb; pdb.set_trace()
-
         name = node.name()
         number = numbers[node]
         output_file.write('node[width=1.5, height=1.5, shape="circle", label="%s"] n%d;\n' % (name, number))
@@ -32,7 +30,6 @@ def dump_ast(ast, output_file):
     output_file.write("}")
 
 def print_output_file(ast, of):
-    # of == output_file
     of.write("MFile 1 %d 384\n" % (ast.attributes['util_vars']['voices'] +1))
 
     of.write("MTrk\n")
@@ -62,12 +59,9 @@ def print_output_file(ast, of):
                 note_clicks = ast.compass().figure_clicks(note.duration.value)
                 vol = 70
                 state = 'On'
-                str_aux = "%03d:%02d:%03d %s  ch=%d note=%s  vol=%d\n" % (compass_counter, pulse, click, state, channel, note.to_s(), vol)
-                #of.write("%03d:%02d:%03d %s ch=%d note=%s vol=%d\n" % (compass_counter, pulse, click, state, channel, note.to_s(), vol))
                 if(not isinstance(note, Silence)):
+                    str_aux = "%03d:%02d:%03d %s  ch=%d note=%s  vol=%d\n" % (compass_counter, pulse, click, state, channel, note.to_s(), vol)
                     of.write(str_aux)
-
-                #import pdb; pdb.set_trace()
 
                 click += note_clicks
 
@@ -81,9 +75,8 @@ def print_output_file(ast, of):
 
                 vol = 0
                 state = 'Off'
-                str_aux = "%03d:%02d:%03d %s ch=%d note=%s  vol=%d\n" % (compass_counter, pulse, click, state, channel, note.to_s(), vol)
-                #import pdb; pdb.set_trace()
                 if(not isinstance(note, Silence)):
+                    str_aux = "%03d:%02d:%03d %s ch=%d note=%s  vol=%d\n" % (compass_counter, pulse, click, state, channel, note.to_s(), vol)
                     of.write(str_aux)
 
         of.write("%03d:%02d:%03d Meta TrkEnd\n" % (compass_counter, pulse, click))
@@ -92,11 +85,6 @@ def print_output_file(ast, of):
 
 lexer = lex(module=lexer_rules)
 file = open('example.mus', 'r')
-#lexer.input(file.read())
-#token = lexer.token()
-#while token is not None:
-  #print token.value
-#  token = lexer.token()
 
 parser = yacc(module=parser_rules)
 text = file.read()

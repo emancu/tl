@@ -47,16 +47,16 @@ class Tempo(Node):
 
   def microseconds(self):
     figure_values = {'redonda': 1, 'blanca': 2, 'negra': 4, 'corchea': 8, 'semicorchea': 16, 'fusa': 32, 'semifusa': 64}
-    f = figure_values[self.items[1]]
-    n = self.items[2]
+    f = figure_values[self.items[0]]
+    n = self.items[1]
 
     return 1000000*15*f/n
 
 class DefCompass(Node):
   def __init__(self, items, attrs = {}):
     Node.__init__(self, 'co', items, attrs)
-    self.n = items[1]
-    self.d = items[3]
+    self.n = items[0]
+    self.d = items[1]
 
   def figure_clicks(self, f):
     if(f.endswith('.')):
@@ -75,7 +75,7 @@ class Voice(Node):
     Node.__init__(self, 'voice', items, attrs)
 
   def instrument(self, constants):
-    instr = self.items[2]
+    instr = self.items[0]
 
     if(isinstance(instr, Constant)):
       instr = constants[instr.name()]
@@ -87,7 +87,7 @@ class Voice(Node):
 
   def compasses(self):
     array = []
-    aux = self.items[-2]
+    aux = self.items[1]
 
     while isinstance(aux, Node):
       child = aux.children()[0]
@@ -107,7 +107,7 @@ class Compass(Node):
 
   def notes(self):
     array = []
-    aux = self.items[-2]
+    aux = self.items[0]
 
     while isinstance(aux, Node):
       array.append(aux.children()[0])
@@ -118,11 +118,11 @@ class Compass(Node):
 class Repeat(Node):
   def __init__(self, items, attrs = {}):
     Node.__init__(self, 'Repeat', items, attrs)
-    self.times = items[2].value
+    self.times = items[0].value
 
   def compasses(self):
     array = []
-    aux = self.items[-2]
+    aux = self.items[1]
 
     while isinstance(aux, Node):
       array.append(aux.children()[0])
@@ -134,9 +134,9 @@ class Note(Node):
   def __init__(self, items, attrs = {}):
     Node.__init__(self, 'Note', items, attrs)
 
-    self.note = Note.translation_en(items[2])
-    self.octave = items[4]
-    self.duration = items[6]
+    self.note = Note.translation_en(items[0])
+    self.octave = items[1]
+    self.duration = items[2]
 
   def to_s(self):
     return self.note + str(self.octave.value)
@@ -157,10 +157,7 @@ class Note(Node):
 class Silence(Note):
   def __init__(self, items, attrs):
     Node.__init__(self, 'Silence', items, attrs)
-    self.duration = items[2]
-
-  def to_s(self):
-    return 'AAAAAAAA'
+    self.duration = items[0]
 
 class Element(object):
   def __init__(self, value, attrs = {}):
