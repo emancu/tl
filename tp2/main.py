@@ -93,6 +93,8 @@ try:
     output_file = open("alee.dot", "w")
     dump_ast(ast, output_file)
     print_output_file(ast, open("output.txt", "w"))
+except Exception as exception:
+    print "Syntax error " + str(exception)
 except parser_rules.SemanticException as exception:
     print "Semantic error: " + str(exception)
 else:

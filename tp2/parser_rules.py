@@ -137,5 +137,4 @@ def p_expression_duration(se):
   se[0] = Element(se[1], {'fig_val': (1 / figure_values[se[1][0:-1]]) * 1.5})
 
 def p_error(subexpressions):
-  import pdb; pdb.set_trace()
-  raise Exception("Syntax error.")
+  raise Exception("at line: %s, token: %s" % (subexpressions.lineno, subexpressions.type) )
