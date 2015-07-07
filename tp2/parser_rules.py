@@ -82,8 +82,19 @@ def p_expression_compass(se):
   se[0] = Compass([se[3]], {'sum': se[3].attributes['sum']} )
 
 def p_expression_compass_repeat(se):
-  'compass_or_repeat : REPEAT LPAREN cons_val RPAREN LCURLYBRACKET voice_content RCURLYBRACKET'
+  'compass_or_repeat : REPEAT LPAREN cons_val RPAREN LCURLYBRACKET repeat_content RCURLYBRACKET'
   se[0] = Repeat([se[3], se[6]], {'sum': se[6].attributes['sum']})
+
+def p_expression_repeat_content(se):
+  'repeat_content : compass repeat_content '
+  se[0] = Node('repeat_content', se[1:], {'sum': se[1].attributes['sum']} )
+
+def p_expression_compass_only(se):
+  'compass : COMPASS LCURLYBRACKET compass_content RCURLYBRACKET'
+  se[0] = Compass([se[3]], {'sum': se[3].attributes['sum']} )
+
+def p_expression_repeat_content_empty(se):
+  'repeat_content :'
 
 def p_expression_compass_empty(se):
   'compass_or_repeat :'
