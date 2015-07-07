@@ -33,10 +33,10 @@ def p_vars(se):
 
   if (cons_val.__class__ == Number):
     names[name] = cons_val.value
-  elif cons_val.name in names:
-    names[name] = names[cons_val.name]
+  elif cons_val.name() in names:
+    names[name] = names[cons_val.name()]
   else:
-    raise SemanticException("const '" + cons_val.name + "' is undefined")
+    raise SemanticException("const '" + cons_val.name() + "' is undefined")
 
   se[0] = Node('vars', se[1:])
 
