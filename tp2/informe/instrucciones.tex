@@ -1,19 +1,26 @@
 \section{Instrucciones}
 
-El programa principal se llama \textbf{musileng}, es un archivo binario y su 
-modo de uso es el siguiente
+El programa principal se llama \textbf{musileng}, es un archivo binario y su modo de uso es el siguiente:
 
-\begin{code}
-musileng [-h] [--ast AST] input_file output_file
+\begin{verbatim}
+	musileng [-h] [--ast AST] inputFile outputFile
 
-Musileng - Compositor Musical.
+	Musileng - Compositor Musical.
 
-positional arguments:
-  input_file
-  output_file
+	required arguments:
+	  inputFile
+	  outputFile
 
-optional arguments:
-  -h, --help         show this help message and exit
-  --ast AST, -a AST  Dump AST into a .dot file
+	optional arguments:
+	  -h, --help         show this help message and exit
+	  --ast AST, -a AST  Dump AST into a .dot file
 
-\end{code}
+\end{verbatim}
+
+\subsection{Example}
+
+\begin{verbatim}
+	./musileng Ejemplos/ej1_input.txt output.txt --ast ast.out
+	AST dumped successfully
+	Syntax is valid.
+\end{verbatim}
