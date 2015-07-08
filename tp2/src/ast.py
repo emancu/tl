@@ -18,15 +18,15 @@ class AST(object):
       queue = [self.ast]
       numbers = {self.ast: 1}
       current_number = 2
+      node_str = 'node[width=1.5, height=1.5, shape="circle", label="%s"] n%d;\n'
 
       f = open(output_file, 'w')
       f.write("digraph {\n")
 
       while len(queue) > 0:
         node = queue.pop(0)
-        name = node.name()
         number = numbers[node]
-        f.write('node[width=1.5, height=1.5, shape="circle", label="%s"] n%d;\n' % (name, number))
+        f.write( node_str % (node.name(), number))
 
         for child in node.children():
           numbers[child] = current_number
@@ -58,5 +58,4 @@ class AST(object):
       file.close()
     except IOError:
       print "Error: can\'t find file or read data"
-
 

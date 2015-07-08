@@ -1,5 +1,4 @@
 class Node(object):
-
   def __init__(self, label, items, attrs = {}):
     self.label = label
     self.items = items
@@ -9,7 +8,7 @@ class Node(object):
     return str(self.label)
 
   def _element(self, x):
-    if(isinstance(x, Element) or isinstance(x, Node) or x.__class__ == Number):
+    if(isinstance(x, Element) or isinstance(x, Node)):
       return x
     else:
       return Element(x)
@@ -52,6 +51,7 @@ class Tempo(Node):
 
     return 1000000*15*f/n
 
+
 class DefCompass(Node):
   def __init__(self, items, attrs = {}):
     Node.__init__(self, 'co', items, attrs)
@@ -66,9 +66,9 @@ class DefCompass(Node):
       mod = 1
 
     figure_values = {'redonda': 1, 'blanca': 2, 'negra': 4, 'corchea': 8, 'semicorchea': 16, 'fusa': 32, 'semifusa': 64}
-    # TODO: Que pasa con el puntillo.
 
     return 384 * self.d * mod / figure_values[f]
+
 
 class Voice(Node):
   def __init__(self, items, attrs = {}):
@@ -115,6 +115,7 @@ class Compass(Node):
 
     return array
 
+
 class Repeat(Node):
   def __init__(self, items, attrs = {}):
     Node.__init__(self, 'Repeat', items, attrs)
@@ -129,6 +130,7 @@ class Repeat(Node):
       aux = aux.children()[-1]
 
     return array * self.times
+
 
 class Note(Node):
   def __init__(self, items, attrs = {}):
@@ -159,6 +161,7 @@ class Silence(Note):
     Node.__init__(self, 'Silence', items, attrs)
     self.duration = items[0]
 
+
 class Element(object):
   def __init__(self, value, attrs = {}):
     self.value = value
@@ -179,14 +182,7 @@ class Constant(Element):
   def name(self):
     return self.var_name
 
-class Number(object):
 
-  def __init__(self, value, attrs = {}):
-    self.value = value
-    self.attributes = attrs
-
+class Number(Element):
   def name(self):
     return "num: " + str(self.value)
-
-  def children(self):
-    return []

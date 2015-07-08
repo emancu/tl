@@ -71,7 +71,12 @@ def p_expression_voice_content(se):
   'voice_content : compass_or_repeat voice_content'
 
   if se[1].attributes['sum'] != util_vars['compass']:
-    raise SemanticException("compass not valid. Sum: " + str(se[1].attributes['sum']) + " expected: " + str(util_vars['compass']))
+    error = 'compass not valid. '
+    error += 'Sum: ' + str(se[1].attributes['sum'])
+    error += " expected: " + str(util_vars['compass'])
+
+    raise SemanticException(error)
+
   se[0] = Node('voice_content', se[1:], {'sum': se[1].attributes['sum']})
 
 def p_expression_voice_content_empty(s):
@@ -137,4 +142,5 @@ def p_expression_duration(se):
   se[0] = Element(se[1], {'fig_val': (1 / figure_values[se[1][0:-1]]) * 1.5})
 
 def p_error(subexpressions):
-  raise Exception("at line: %s, token: %s" % (subexpressions.lineno, subexpressions.type) )
+  values = (subexpressions.lineno, subexpressions.type)
+  raise Exception("at line: %s, token: %s" % values)
