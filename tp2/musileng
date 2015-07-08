@@ -2,8 +2,8 @@
 #
 
 import argparse
-from ast import AST
-from midicomp_exporter import MidicompExporter
+from src.ast import AST
+from src.midicomp_exporter import MidicompExporter
 
 parser = argparse.ArgumentParser(description='Musileng - Compositor Musical.')
 
