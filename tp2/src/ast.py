@@ -16,7 +16,7 @@ class AST(object):
     try:
       edges = []
       queue = [self.ast]
-      numbers = {ast: 1}
+      numbers = {self.ast: 1}
       current_number = 2
 
       f = open(output_file, 'w')
