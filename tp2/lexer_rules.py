@@ -17,8 +17,6 @@ tokens = [
     'LCURLYBRACKET',
     'EQUAL',
     'NUMBER',
-    'PLUS',
-    'TIMES',
     'LPAREN',
     'RPAREN',
     'SEMICOLON'
@@ -74,9 +72,6 @@ def t_RCURLYBRACKET(t):
     return t
 def t_EQUAL(t):
     "="
-    return t
-def t_PLUS(t):
-    "\+"
     return t
 def t_LPAREN(t):
     "\("
