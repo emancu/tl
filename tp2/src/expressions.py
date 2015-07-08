@@ -144,7 +144,8 @@ class Note(Node):
 
   @staticmethod
   def translation_en(to_translate):
-    translation = { 'do': 'c', 're': 'd', 'mi': 'e', 'fa': 'f', 'sol': 'g', 'la': 'a', 'si': 'b' }
+    translation = { 'do': 'c', 're': 'd', 'mi': 'e', 'fa': 'f',
+                    'sol': 'g', 'la': 'a', 'si': 'b' }
     aux = to_translate[-1]
 
     if( aux == '-' or aux == '+'):

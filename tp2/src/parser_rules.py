@@ -30,12 +30,10 @@ def p_vars(se):
   if name in names:
     raise SemanticException("const '" + name + "' is already defined")
 
-  if (cons_val.__class__ == Number):
+  if isinstance(cons_val, Number):
     names[name] = cons_val.value
   elif cons_val.name() in names:
     names[name] = names[cons_val.name()]
-  else:
-    raise SemanticException("const '" + cons_val.name() + "' is undefined")
 
   se[0] = Node('vars', [se[1], se[3], se[5]])
 
@@ -48,7 +46,11 @@ def p_cons_val_number(se):
 
 def p_cons_val_name(se):
   'cons_val : NAME'
-  se[0] = Constant(se[1], names[se[1]])
+
+  if se[1] in names:
+    se[0] = Constant(se[1], names[se[1]])
+  else:
+    raise SemanticException("const '" + se[1] + "' is undefined")
 
 def p_expression_voices(s):
   'voices : voice voices'

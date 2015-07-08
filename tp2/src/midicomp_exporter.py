@@ -30,11 +30,14 @@ class MidicompExporter(object):
 
   def _export_header(self):
     ast = self.ast
-    self.stream.write("MFile 1 %d 384\n" % (ast.attributes['util_vars']['voices'] +1))
+    values = (ast.attributes['util_vars']['voices'] +1)
+    self.stream.write("MFile 1 %d 384\n" % values)
 
     self.stream.write("MTrk\n")
-    self.stream.write("000:00:000 Tempo %d\n" % (ast.tempo().microseconds()))
-    self.stream.write("000:00:000 TimeSig %d/%d 24 8\n" % (ast.compass().n, ast.compass().d))
+    values = (ast.tempo().microseconds())
+    self.stream.write("000:00:000 Tempo %d\n" % values)
+    values = (ast.compass().n, ast.compass().d)
+    self.stream.write("000:00:000 TimeSig %d/%d 24 8\n" % values)
     self.stream.write("000:00:000 Meta TrkEnd\n")
     self.stream.write("TrkEnd\n")
 
@@ -46,13 +49,16 @@ class MidicompExporter(object):
     self.click = 0
 
     self.stream.write("MTrk\n")
-    self.stream.write("000:00:000 Meta TrkName \"Voz %d\"\n" % self.channel)
-    self.stream.write("000:00:000 ProgCh ch=%d prog=%d\n" % (self.channel, voice.instrument(self.constants)))
+    values = self.channel
+    self.stream.write("000:00:000 Meta TrkName \"Voz %d\"\n" % values)
+    values = (self.channel, voice.instrument(self.constants))
+    self.stream.write("000:00:000 ProgCh ch=%d prog=%d\n" % values)
 
     for compass in voice.compasses():
       self._export_compass(compass)
 
-    self.stream.write("%03d:%02d:%03d Meta TrkEnd\n" % (self.compass_counter, self.pulse, self.click))
+    values = (self.compass_counter, self.pulse, self.click)
+    self.stream.write("%03d:%02d:%03d Meta TrkEnd\n" % values)
     self.stream.write("TrkEnd\n")
 
 
@@ -70,12 +76,14 @@ class MidicompExporter(object):
   def _export_note(self, note):
     str_aux = "%03d:%02d:%03d %s ch=%d note=%s  vol=%d\n"
 
-    values = (self.compass_counter, self.pulse, self.click, 'On ', self.channel, note.to_s(), 70)
+    values = (self.compass_counter, self.pulse, self.click,
+              'On ', self.channel, note.to_s(), 70)
     self.stream.write(str_aux % values)
 
     self._increase_clicks(note)
 
-    values = (self.compass_counter, self.pulse, self.click, 'Off', self.channel, note.to_s(), 0)
+    values = (self.compass_counter, self.pulse, self.click,
+              'Off', self.channel, note.to_s(), 0)
     self.stream.write(str_aux % values)
 
 

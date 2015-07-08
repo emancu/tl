@@ -2,8 +2,10 @@
 #
 
 import argparse
+
 from src.ast import AST
 from src.midicomp_exporter import MidicompExporter
+from src.parser_rules import SemanticException
 
 parser = argparse.ArgumentParser(description='Musileng - Compositor Musical.')
 
@@ -23,9 +25,9 @@ try:
 
   if args.ast: ast.dump_ast(args.ast)
 
+except SemanticException as exception:
+  print "Semantic error: " + str(exception)
 except Exception as exception:
   print "Syntax error " + str(exception)
-except parser_rules.SemanticException as exception:
-  print "Semantic error: " + str(exception)
 else:
   print "Syntax is valid."
