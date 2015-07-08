@@ -1,14 +1,13 @@
 from __future__ import division
 from lexer_rules import tokens
 from expressions import *
+from helpers import figure_values
 
 class SemanticException(Exception):
   pass
 
 names = {}
 util_vars = { 'voices': 0 }
-figure_values = {'redonda': 1, 'blanca': 2, 'negra': 4, 'corchea': 8,
-'semicorchea': 16, 'fusa': 32, 'semifusa': 64}
 
 def p_expression_initial(se):
   'expression : te co vars voices'
@@ -135,11 +134,11 @@ def p_expression_silence(se):
 
 def p_expression_figure(se):
   'figure_duration : FIGURE'
-  se[0] = Element(se[1], {'fig_val': 1 / figure_values[se[1]]})
+  se[0] = Element(se[1], {'fig_val': 1 / figure_values(se[1])})
 
 def p_expression_duration(se):
   'figure_duration : DURATION'
-  se[0] = Element(se[1], {'fig_val': (1 / figure_values[se[1][0:-1]]) * 1.5})
+  se[0] = Element(se[1], {'fig_val': (1 / figure_values(se[1][0:-1])) * 1.5})
 
 def p_error(subexpressions):
   values = (subexpressions.lineno, subexpressions.type)

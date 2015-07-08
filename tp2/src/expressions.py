@@ -1,3 +1,5 @@
+from helpers import figure_values
+
 class Node(object):
   def __init__(self, label, items, attrs = {}):
     self.label = label
@@ -45,8 +47,7 @@ class Tempo(Node):
     Node.__init__(self, 'te', items, attrs)
 
   def microseconds(self):
-    figure_values = {'redonda': 1, 'blanca': 2, 'negra': 4, 'corchea': 8, 'semicorchea': 16, 'fusa': 32, 'semifusa': 64}
-    f = figure_values[self.items[0]]
+    f = figure_values(self.items[0])
     n = self.items[1]
 
     return 1000000*15*f/n
@@ -65,9 +66,7 @@ class DefCompass(Node):
     else:
       mod = 1
 
-    figure_values = {'redonda': 1, 'blanca': 2, 'negra': 4, 'corchea': 8, 'semicorchea': 16, 'fusa': 32, 'semifusa': 64}
-
-    return 384 * self.d * mod / figure_values[f]
+    return 384 * self.d * mod / figure_values(f)
 
 
 class Voice(Node):
