@@ -1,0 +1,42 @@
+\section{Grámatica Y Tokens}
+
+\begin{verbatim}
+expression -> te co vars voices
+te -> TEMPO FIGURE NUMBER
+co -> COMPASS_V NUMBER DIV NUMBER
+vars -> vars CONST NAME EQUAL cons_val SEMICOLON
+vars ->
+
+cons_val -> NUMBER
+cons_val -> NAME
+voices -> voice voices
+voices ->
+
+voice -> VOICE LPAREN cons_val RPAREN LCURLYBRACKET voice_content RCURLYBRACKET
+
+
+voice_content -> compass_or_repeat voice_content
+voice_content ->
+
+compass_or_repeat -> COMPASS LCURLYBRACKET compass_content RCURLYBRACKET
+compass_or_repeat -> REPEAT LPAREN cons_val RPAREN LCURLYBRACKET repeat_content RCURLYBRACKET
+compass_or_repeat ->
+
+repeat_content -> compass repeat_content 
+repeat_content ->
+
+compass -> COMPASS LCURLYBRACKET compass_content RCURLYBRACKET
+compass_content -> note compass_content 
+compass_content -> silence compass_content
+compass_content ->
+
+note -> NOTE LPAREN NOTE_ID COMMA cons_val COMMA figure_duration RPAREN SEMICOLON
+silence -> SILENCE LPAREN figure_duration RPAREN SEMICOLON
+figure_duration -> FIGURE
+figure_duration -> DURATION
+
+\end{verbatim}
+
+\subsection{Tokens}
+
+Las expresiones regulares de los tokens se encuentran al final del informe, en el código del archivo \textit{lexer\_rules.py}.
