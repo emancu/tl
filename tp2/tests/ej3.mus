@@ -1,0 +1,57 @@
+#tempo negra 60
+#compas 2/4
+
+const oct1 = 6;
+const oct2 = 5;
+
+// Instrumentos
+const acordeon = 22;
+
+voz (acordeon)
+{
+	compas
+	{
+		silencio(semicorchea);
+		nota(mi, oct1, semicorchea);
+		nota(mi, oct1, semicorchea);
+		nota(la, oct1, semicorchea);
+		nota(fa, oct1, semicorchea);
+		silencio(semicorchea);
+		nota(mi, oct1, semicorchea);
+		silencio(semicorchea);
+	}
+
+	compas
+	{
+		silencio(negra);
+		silencio(semicorchea);
+		nota(mi, oct2, semicorchea);
+		nota(mi, oct2, semicorchea);
+		nota(fa, oct2, semicorchea);
+	}
+
+	compas
+	{
+		nota(do, oct1, semicorchea);
+		silencio(semicorchea);
+		nota(si, oct2, semicorchea);
+		silencio(semicorchea);
+		silencio(semicorchea);
+		nota(mi, oct2, semicorchea);
+		nota(mi, oct2, semicorchea);
+		nota(fa, oct2, semicorchea);
+	}
+
+	compas
+	{
+		nota(sol+, oct1, semicorchea);
+		nota(si, oct2, semicorchea);
+		nota(si, oct2, semicorchea);
+		nota(fa, oct2, semicorchea);
+		nota(fa, oct2, semicorchea);
+		nota(mi, oct2, semicorchea);
+		nota(mi, oct2, semicorchea);
+		nota(sol+, oct2, semicorchea);
+	}
+}
+

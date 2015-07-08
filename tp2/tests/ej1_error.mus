@@ -1,0 +1,35 @@
+#tempo negra 120
+#compas 3/4
+
+const oct1 = 5;
+const oct2 = 6;
+
+// Instrumento
+const clarinete = 72;
+
+voz (clarinete)
+{
+	compas
+	{
+		nota(re, oct2, blanca);
+	}
+
+	compas
+	{
+		nota(la, oct2, blanca);
+		nota(la, oct2, negra);
+	}
+
+	compas
+	{
+		nota(mi, oct1, negra.);
+		nota(fa, oct1, corchea);
+		nota(mi, oct1, negra);
+	}
+
+	compas
+	{
+		nota(re, oct1, blanca.);
+	}
+
+}

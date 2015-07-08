@@ -1,0 +1,39 @@
+#tempo negra 100
+#compas 3/4
+
+const oct1 = 6;
+const oct2 = 5;
+const oct3 = 4;
+
+// Instrumentos
+const armonica = 23;
+
+voz (armonica)
+{
+	compas
+		{
+			nota(mi, oct1, negra);
+			nota(do, oct1, corchea);
+			nota(re, oct1, corchea);
+			nota(mi, oct1, corchea);
+			nota(fa+, oct1, corchea);
+		}
+
+	compas
+	(
+		nota(fa, oct1, semicorchea);
+		silencio(semicorchea);
+		nota(mi, oct1, semicorchea);
+		silencio(semicorchea);
+		silencio(semicorchea);
+		nota(mi, oct1, semicorchea);
+		nota(re+, oct1, semicorchea);
+		nota(mi, oct1, semicorchea);
+	)
+
+	compas
+	{
+		nota(la, oct1, blanca.);
+	}
+}
+
